@@ -510,7 +510,7 @@ class GPModel(Model):
         """
         mu, var = self.build_prior_mean_var(test_points, num_latent, True)
         jitter = tfhacks.eye(tf.shape(mu)[0], var.dtype) * 1e-06
-        L = tf.batch_cholesky(tf.transpose(var, (2, 0, 1)) + jitter)
+        L = tf.cholesky(tf.transpose(var, (2, 0, 1)) + jitter)
         V_shape = [tf.shape(L)[0], tf.shape(L)[1], num_samples]
         V = tf.random_normal(V_shape, dtype=L.dtype)
         samples = tf.expand_dims(tf.transpose(mu), -1) + tf.batch_matmul(L, V)
@@ -652,7 +652,7 @@ class GPModel(Model):
         """
         mu, var = self.build_posterior_mean_var(X, Y, test_points, True)
         jitter = tfhacks.eye(tf.shape(mu)[0], var.dtype) * 1e-06
-        L = tf.batch_cholesky(tf.transpose(var, (2, 0, 1)) + jitter)
+        L = tf.cholesky(tf.transpose(var, (2, 0, 1)) + jitter)
         V_shape = [tf.shape(L)[0], tf.shape(L)[1], num_samples]
         V = tf.random_normal(V_shape, dtype=L.dtype)
         samples = tf.expand_dims(tf.transpose(mu), -1) + tf.batch_matmul(L, V)
