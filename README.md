@@ -23,7 +23,7 @@ Tests can be run using `python setup.py nosetests`.
 
 
 [tensorflow]: https://www.tensorflow.org
-[install tensorflow]: https://www.tensorflow.org/versions/r0.10/get_started/os_setup.html#pip-installation
+[install tensorflow]: https://www.tensorflow.org/versions/r0.11/get_started/os_setup.html#pip-installation
 [GPflow]: https://github.com/GPflow/GPflow
 [notebooks]: notebooks
 [documentation]: http://icl-sml.github.io/gptf/
