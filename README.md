@@ -14,7 +14,7 @@ and documentation can be found [here][documentation].
 
 ## Installation
 
-1. [Install TensorFlow manually][install tensorflow] (at least version 0.9).
+1. [Install TensorFlow manually][install tensorflow] (at least version 0.11).
 2. Run `python setup.py develop`.
 
 ## Running tests
