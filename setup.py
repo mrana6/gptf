@@ -32,7 +32,7 @@ if not all(kw_args.get(arg, None) for arg in args_needed):
     raise RuntimeError("Unable to find required info in {}".format(infofile))
 
 kw_args['install_requires'] =\
-        [ 'tensorflow>=0.11'
+        [ 'tensorflow>=0.9, <0.11'
         , 'scipy'
         , 'numpy'
         , 'future>=0.15'
