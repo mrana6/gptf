@@ -1378,8 +1378,8 @@ def autoflow(*placeholder_specs):
         array([ 5., 7., 9.])
 
         `MyClass.tf_reduce_sum` will only allow arguments that match the
-        shape `[1, None]`; that is, rank 2 tensors whose first dimension
-        is `5`.
+        shape `[3, None]`; that is, rank 2 tensors whose first dimension
+        is `3`.
 
         >>> # shape is (3, 2), compatible with [3, None]
         >>> m.tf_reduce_sum([[1., 2.], [2., 3.], [3., 4.]])
