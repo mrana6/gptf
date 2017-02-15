@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>gptf.core package &mdash; gptf 1.0.0 documentation</title>
+    <title>gptf.core package &#8212; gptf 1.1.0 documentation</title>
     
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,19 +14,22 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '1.0.0',
+        VERSION:     '1.1.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="gptf 1.0.0 documentation" href="index.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
@@ -397,7 +400,7 @@ If <code class="code docutils literal"><span class="pre">None</span></code>, the
 <dl class="method">
 <dt id="gptf.core.kernels.Kernel.compute_K_symm">
 <code class="descname">compute_K_symm</code><span class="sig-paren">(</span><em>instance</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/kernels.html#Kernel.compute_K_symm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gptf.core.kernels.Kernel.compute_K_symm" title="Permalink to this definition">¶</a></dt>
-<dd><p>An autoflowed version of K(X)</p>
+<dd><p>Deprecated since version 1.1.0</p>
 </dd></dl>
 
 <dl class="method">
@@ -569,7 +572,7 @@ arguments passed to <code class="code docutils literal"><span class="pre">.K()</
 <p>Slices are applied to the second axis of the input.
 A slice of <code class="code docutils literal"><span class="pre">:3</span></code> turns <code class="code docutils literal"><span class="pre">X</span></code> into <code class="code docutils literal"><span class="pre">X[:,</span> <span class="pre">:3]</span></code>.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">k</span> <span class="o">=</span> <span class="n">PartiallyActive</span><span class="p">(</span><span class="n">Example</span><span class="p">(),</span> <span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>  <span class="c1"># :3</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">X_k</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">k</span><span class="o">.</span><span class="n">compute_K</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">X_k</span><span class="o">.</span><span class="n">shape</span>
 <span class="go">(1, 3)</span>
@@ -1194,7 +1197,8 @@ likelihoods (e.g. Gaussian, Poisson) will implement specific cases.</p>
 <div class="math">
 \[ \begin{align}\begin{aligned}θ ~ p(θ)\\f ~ GP(m(x), k(x, x'; θ))\\F = f(X)\\Y|F ~ p(Y|F)\end{aligned}\end{align} \]</div>
 <p>Adds functionality to compile various predictions. Inheriting
-classes must define <code class="code docutils literal"><span class="pre">.build_predict()</span></code>, which is then used by this
+classes must define <code class="code docutils literal"><span class="pre">.build_prior_mean_var()</span></code>, and
+<code class="code docutils literal"><span class="pre">.build_posterior_mean_var()</span></code>, which are then used by this
 class&#8217;s methods to provide various predictions. The mean and
 variance are pushed through the likelihood to obtain the means and
 variances of held out data.</p>
@@ -1277,34 +1281,7 @@ Both tensors have the same dtype.</p>
 <dl class="method">
 <dt id="gptf.core.models.GPModel.compute_posterior_mean_cov">
 <code class="descname">compute_posterior_mean_cov</code><span class="sig-paren">(</span><em>instance</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/models.html#GPModel.compute_posterior_mean_cov"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gptf.core.models.GPModel.compute_posterior_mean_cov" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the means and full covariance matrices.</p>
-<p>This is just an autoflowed version of
-<code class="code docutils literal"><span class="pre">.build_predict(X,</span> <span class="pre">Y,</span> <span class="pre">test_points,</span> <span class="pre">full_cov=True)</span></code>.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>X</strong> (<em>np.ndarray</em>) &#8211; The training inputs, shape <code class="code docutils literal"><span class="pre">[n,</span> <span class="pre">point_dims]</span></code></li>
-<li><strong>Y</strong> (<em>np.ndarray</em>) &#8211; The training outputs, shape <code class="code docutils literal"><span class="pre">[n,</span> <span class="pre">num_latent]</span></code></li>
-<li><strong>test_points</strong> (<em>np.ndarray</em>) &#8211; The points from the sample
-space for which to predict means and variances
-of the posterior distribution(s), shape
-<code class="code docutils literal"><span class="pre">[m,</span> <span class="pre">point_dims]</span></code>.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The means at the test points
-(shape <code class="code docutils literal"><span class="pre">[m,</span> <span class="pre">num_latent]</span></code>), the full covriance
-matri(x|ces) for the posterior distribution(s)
-(shape <code class="code docutils literal"><span class="pre">[m,</span> <span class="pre">m,</span> <span class="pre">num_latent]</span></code>).</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">(np.ndarray, np.ndarray)</p>
-</td>
-</tr>
-</tbody>
-</table>
+<dd><p>Deprecated since version 1.1.0</p>
 </dd></dl>
 
 <dl class="method">
@@ -1312,7 +1289,7 @@ matri(x|ces) for the posterior distribution(s)
 <code class="descname">compute_posterior_mean_var</code><span class="sig-paren">(</span><em>instance</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/models.html#GPModel.compute_posterior_mean_var"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gptf.core.models.GPModel.compute_posterior_mean_var" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the means and variances of the posterior(s).</p>
 <p>This is just an autoflowed version of
-<code class="code docutils literal"><span class="pre">.build_posterior_mean_var(X,</span> <span class="pre">Y,</span> <span class="pre">test_points)</span></code>.</p>
+<a class="reference internal" href="#gptf.core.models.GPModel.build_posterior_mean_var" title="gptf.core.models.GPModel.build_posterior_mean_var"><code class="xref py py-meth docutils literal"><span class="pre">build_posterior_mean_var()</span></code></a>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1324,12 +1301,15 @@ matri(x|ces) for the posterior distribution(s)
 space for which to predict means and variances
 of the posterior distribution(s), shape
 <code class="code docutils literal"><span class="pre">[m,</span> <span class="pre">point_dims]</span></code>.</li>
+<li><strong>full_cov</strong> (<em>bool</em>) &#8211; If <code class="code docutils literal"><span class="pre">False</span></code>, return an array of variances
+at the test points. If <code class="code docutils literal"><span class="pre">True</span></code>, return the full
+covariance matrix of the posterior distribution.</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The means at the test points
 (shape <code class="code docutils literal"><span class="pre">[m,</span> <span class="pre">num_latent]</span></code>), the variances at the test points
-(shape <code class="code docutils literal"><span class="pre">[m,</span> <span class="pre">num_latent]</span></code>).</p>
+(shape <code class="code docutils literal"><span class="pre">[m,</span> <span class="pre">num_latent]</span></code>) or the full covariance matrix</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">(np.ndarray, np.ndarray)</p>
@@ -1376,7 +1356,7 @@ or an independent covariance matrix.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">gptf</span> <span class="k">import</span> <span class="n">ParamAttributes</span><span class="p">,</span> <span class="n">tfhacks</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Example</span><span class="p">(</span><span class="n">GPModel</span><span class="p">,</span> <span class="n">ParamAttributes</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="p">):</span>
-<span class="gp">... </span>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+<span class="gp">... </span>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 <span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">dtype</span>
 <span class="gp">... </span>    <span class="nd">@property</span>
 <span class="gp">... </span>    <span class="k">def</span> <span class="nf">dtype</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1388,12 +1368,12 @@ or an independent covariance matrix.</p>
 <span class="gp">... </span>    <span class="nd">@tf_method</span><span class="p">()</span>
 <span class="gp">... </span>    <span class="nd">@overrides</span>
 <span class="gp">... </span>    <span class="k">def</span> <span class="nf">build_log_likelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="gp">... </span>        <span class="bp">NotImplemented</span>
+<span class="gp">... </span>        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 <span class="gp">... </span>    <span class="nd">@tf_method</span><span class="p">()</span>
 <span class="gp">... </span>    <span class="nd">@overrides</span>
 <span class="gp">... </span>    <span class="k">def</span> <span class="nf">build_prior_mean_var</span>\
 <span class="gp">... </span>            <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_points</span><span class="p">,</span> <span class="n">num_latent</span><span class="p">,</span> <span class="n">full_cov</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="gp">... </span>        <span class="bp">NotImplemented</span>
+<span class="gp">... </span>        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 <span class="gp">... </span>    <span class="nd">@tf_method</span><span class="p">()</span>
 <span class="gp">... </span>    <span class="nd">@overrides</span>
 <span class="gp">... </span>    <span class="k">def</span> <span class="nf">build_posterior_mean_var</span>\
@@ -1401,13 +1381,13 @@ or an independent covariance matrix.</p>
 <span class="gp">... </span>        <span class="n">n</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">test_points</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 <span class="gp">... </span>        <span class="n">num_latent</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">Y</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
 <span class="gp">... </span>        <span class="n">mu</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
-<span class="gp">... </span>        <span class="n">mu</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_latent</span><span class="p">))</span>
+<span class="gp">... </span>        <span class="n">mu</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">pack</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_latent</span><span class="p">]))</span>
 <span class="gp">... </span>        <span class="k">if</span> <span class="n">full_cov</span><span class="p">:</span>
 <span class="gp">... </span>            <span class="n">var</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">tfhacks</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
-<span class="gp">... </span>            <span class="n">var</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">num_latent</span><span class="p">))</span>
+<span class="gp">... </span>            <span class="n">var</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">pack</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">num_latent</span><span class="p">]))</span>
 <span class="gp">... </span>        <span class="k">else</span><span class="p">:</span>
 <span class="gp">... </span>            <span class="n">var</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">ones</span><span class="p">([</span><span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
-<span class="gp">... </span>            <span class="n">var</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_latent</span><span class="p">))</span>
+<span class="gp">... </span>            <span class="n">var</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">pack</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_latent</span><span class="p">]))</span>
 <span class="gp">... </span>        <span class="k">return</span> <span class="n">mu</span><span class="p">,</span> <span class="n">var</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">Example</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="o">.</span><span class="mi">5</span><span class="p">]])</span>
@@ -1438,33 +1418,7 @@ returned by <code class="code docutils literal"><span class="pre">.build_predict
 <dl class="method">
 <dt id="gptf.core.models.GPModel.compute_prior_mean_cov">
 <code class="descname">compute_prior_mean_cov</code><span class="sig-paren">(</span><em>instance</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/models.html#GPModel.compute_prior_mean_cov"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gptf.core.models.GPModel.compute_prior_mean_cov" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the means and full covariance matrices.</p>
-<p>This is just an autoflowed version of
-<code class="code docutils literal"><span class="pre">.build_prior_mean_var(test_points,</span> <span class="pre">num_latent,</span> <span class="pre">True)</span></code>.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>test_points</strong> (<em>np.ndarray</em>) &#8211; The points from the sample
-space for which to predict means and variances
-of the prior distribution(s). The shape should be
-<code class="code docutils literal"><span class="pre">[m,</span> <span class="pre">point_dims]</span></code>.</li>
-<li><strong>num_latent</strong> (<em>int</em>) &#8211; The number of latent functions of the GP.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The means at the test points
-(shape <code class="code docutils literal"><span class="pre">[m,</span> <span class="pre">num_latent]</span></code>), the full covariance
-matri(x|ces) for the prior distribution(s) (shape
-<code class="code docutils literal"><span class="pre">[m,</span> <span class="pre">m,</span> <span class="pre">num_latent]</span></code>.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">(np.ndarray, np.ndarray)</p>
-</td>
-</tr>
-</tbody>
-</table>
+<dd><p>Deprecated since version 1.1.0</p>
 </dd></dl>
 
 <dl class="method">
@@ -1472,7 +1426,7 @@ matri(x|ces) for the prior distribution(s) (shape
 <code class="descname">compute_prior_mean_var</code><span class="sig-paren">(</span><em>instance</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/models.html#GPModel.compute_prior_mean_var"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gptf.core.models.GPModel.compute_prior_mean_var" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the means and variances of the prior(s).</p>
 <p>This is just an autoflowed version of
-<code class="code docutils literal"><span class="pre">.build_prior_mean_var(test_points,</span> <span class="pre">num_latent)</span></code>.</p>
+<a class="reference internal" href="#gptf.core.models.GPModel.build_prior_mean_var" title="gptf.core.models.GPModel.build_prior_mean_var"><code class="xref py py-meth docutils literal"><span class="pre">build_prior_mean_var()</span></code></a>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1483,12 +1437,16 @@ space for which to predict means and variances
 of the prior distribution(s). The shape should be
 <code class="code docutils literal"><span class="pre">[m,</span> <span class="pre">point_dims]</span></code>.</li>
 <li><strong>num_latent</strong> (<em>int</em>) &#8211; The number of latent functions of the GP.</li>
+<li><strong>full_cov</strong> (<em>bool</em>) &#8211; If <code class="code docutils literal"><span class="pre">False</span></code>, return an array of variances
+at the test points. If <code class="code docutils literal"><span class="pre">True</span></code>, return the full
+covariance matrix of the posterior distribution.</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">the mean at the test points
-(shape <code class="code docutils literal"><span class="pre">[m,</span> <span class="pre">num_latent]</span></code>), the variances at the test
-points (shape <code class="code docutils literal"><span class="pre">[m,</span> <span class="pre">num_latent]</span></code>).</p>
+(shape <code class="code docutils literal"><span class="pre">[m,</span> <span class="pre">num_latent]</span></code>), the variances at the test points
+(shape <code class="code docutils literal"><span class="pre">[m,</span> <span class="pre">num_latent]</span></code>) or the full covariance matrix
+(shape <code class="code docutils literal"><span class="pre">[m,</span> <span class="pre">m,</span> <span class="pre">num_latent]</span></code>).</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">(np.ndarray, np.ndarray)</p>
@@ -1534,7 +1492,7 @@ or an independent covariance matrix.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">gptf</span> <span class="k">import</span> <span class="n">ParamAttributes</span><span class="p">,</span> <span class="n">tfhacks</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Example</span><span class="p">(</span><span class="n">GPModel</span><span class="p">,</span> <span class="n">ParamAttributes</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="p">):</span>
-<span class="gp">... </span>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+<span class="gp">... </span>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 <span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">dtype</span>
 <span class="gp">... </span>    <span class="nd">@property</span>
 <span class="gp">... </span>    <span class="k">def</span> <span class="nf">dtype</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1546,26 +1504,26 @@ or an independent covariance matrix.</p>
 <span class="gp">... </span>    <span class="nd">@tf_method</span><span class="p">()</span>
 <span class="gp">... </span>    <span class="nd">@overrides</span>
 <span class="gp">... </span>    <span class="k">def</span> <span class="nf">build_log_likelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="gp">... </span>        <span class="bp">NotImplemented</span>
+<span class="gp">... </span>        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 <span class="gp">... </span>    <span class="nd">@tf_method</span><span class="p">()</span>
 <span class="gp">... </span>    <span class="nd">@overrides</span>
 <span class="gp">... </span>    <span class="k">def</span> <span class="nf">build_prior_mean_var</span>\
 <span class="gp">... </span>            <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_points</span><span class="p">,</span> <span class="n">num_latent</span><span class="p">,</span> <span class="n">full_cov</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="gp">... </span>        <span class="n">n</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">test_points</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 <span class="gp">... </span>        <span class="n">mu</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
-<span class="gp">... </span>        <span class="n">mu</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_latent</span><span class="p">))</span>
+<span class="gp">... </span>        <span class="n">mu</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">pack</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_latent</span><span class="p">]))</span>
 <span class="gp">... </span>        <span class="k">if</span> <span class="n">full_cov</span><span class="p">:</span>
 <span class="gp">... </span>            <span class="n">var</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">tfhacks</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
-<span class="gp">... </span>            <span class="n">var</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">num_latent</span><span class="p">))</span>
+<span class="gp">... </span>            <span class="n">var</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">pack</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">num_latent</span><span class="p">]))</span>
 <span class="gp">... </span>        <span class="k">else</span><span class="p">:</span>
 <span class="gp">... </span>            <span class="n">var</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">ones</span><span class="p">([</span><span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
-<span class="gp">... </span>            <span class="n">var</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_latent</span><span class="p">))</span>
+<span class="gp">... </span>            <span class="n">var</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">pack</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_latent</span><span class="p">]))</span>
 <span class="gp">... </span>        <span class="k">return</span> <span class="n">mu</span><span class="p">,</span> <span class="n">var</span>
 <span class="gp">... </span>    <span class="nd">@tf_method</span><span class="p">()</span>
 <span class="gp">... </span>    <span class="nd">@overrides</span>
 <span class="gp">... </span>    <span class="k">def</span> <span class="nf">build_posterior_mean_var</span>\
 <span class="gp">... </span>            <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">test_points</span><span class="p">,</span> <span class="n">full_cov</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="gp">... </span>        <span class="bp">NotImplemented</span>
+<span class="gp">... </span>        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">Example</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>  <span class="c1"># ignore the likelihood</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">test_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.</span><span class="p">],</span> <span class="p">[</span><span class="mf">3.</span><span class="p">]])</span>
 </pre></div>
@@ -1617,7 +1575,7 @@ defined like so:</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">gptf</span> <span class="k">import</span> <span class="n">Param</span><span class="p">,</span> <span class="n">ParamAttributes</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Example</span><span class="p">(</span><span class="n">Model</span><span class="p">,</span> <span class="n">ParamAttributes</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="gp">... </span>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+<span class="gp">... </span>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 <span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">Param</span><span class="p">(</span><span class="mf">1.</span><span class="p">)</span>  <span class="c1"># create new Param child</span>
 <span class="gp">...</span>
 <span class="gp">... </span>    <span class="nd">@tf_method</span><span class="p">()</span>
@@ -1627,14 +1585,14 @@ defined like so:</p>
 </pre></div>
 </div>
 <p>The <code class="code docutils literal"><span class="pre">.optimize</span></code> method can be used to optimize the parameters of the
-model to minimize the negative log-marginal likelihood. The loss function (the negative of
-the sum of the log-marginal likelihood and any priors) is cached in the WrappedTF
+model to minimise the likelihood. The loss function (the negative of
+the sum of the likelihood and any priors) is cached in the WrappedTF
 cache, and lazily recompiled when the cache is cleared, e.g. on
 recompile.</p>
 <dl class="method">
 <dt id="gptf.core.models.Model.build_log_likelihood">
 <code class="descname">build_log_likelihood</code><span class="sig-paren">(</span><em>X</em>, <em>Y</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/models.html#Model.build_log_likelihood"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gptf.core.models.Model.build_log_likelihood" title="Permalink to this definition">¶</a></dt>
-<dd><p>Builds the log-marginal likelihood of the model w.r.t. the data.</p>
+<dd><p>Builds the log likelihood of the model w.r.t. the data.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1645,7 +1603,7 @@ recompile.</p>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A tensor that, when run, calculates the log-marginal
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A tensor that, when run, calculates the log
 likelihood of the model.</p>
 </td>
 </tr>
@@ -1658,13 +1616,13 @@ likelihood of the model.</p>
 
 <dl class="method">
 <dt id="gptf.core.models.Model.build_log_prior">
-<code class="descname">build_log_prior</code><span class="sig-paren">(</span><em>instance</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/models.html#Model.build_log_prior"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gptf.core.models.Model.build_log_prior" title="Permalink to this definition">¶</a></dt>
+<code class="descname">build_log_prior</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/models.html#Model.build_log_prior"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gptf.core.models.Model.build_log_prior" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="gptf.core.models.Model.compute_log_likelihood">
 <code class="descname">compute_log_likelihood</code><span class="sig-paren">(</span><em>instance</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/models.html#Model.compute_log_likelihood"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gptf.core.models.Model.compute_log_likelihood" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the marginal likelihood of the model w.r.t. the data.</p>
+<dd><p>Computes the likelihood of the model w.r.t. the data.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1679,14 +1637,14 @@ likelihood of the model.</p>
 
 <dl class="method">
 <dt id="gptf.core.models.Model.compute_log_prior">
-<code class="descname">compute_log_prior</code><span class="sig-paren">(</span><em>instance</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/models.html#Model.compute_log_prior"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gptf.core.models.Model.compute_log_prior" title="Permalink to this definition">¶</a></dt>
+<code class="descname">compute_log_prior</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/models.html#Model.compute_log_prior"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gptf.core.models.Model.compute_log_prior" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="gptf.core.models.Model.optimize">
 <code class="descname">optimize</code><span class="sig-paren">(</span><em>instance</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/models.html#Model.optimize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gptf.core.models.Model.optimize" title="Permalink to this definition">¶</a></dt>
-<dd><p>Optimize the model by minimizing the negative log-marginal likelihood.</p>
-<p>Minimizes the (negative) sum of the log-marginal likelihood given X &amp; Y and any
+<dd><p>Optimize the model by maximising the log likelihood.</p>
+<p>Maximises the sum of the log likelihood given X &amp; Y and any
 priors with respect to any free variables.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1702,7 +1660,7 @@ the <code class="code docutils literal"><span class="pre">method</span></code> a
 will be treated as an instance of <code class="code docutils literal"><span class="pre">tf.train.Optimizer</span></code>
 and its <code class="code docutils literal"><span class="pre">.minimize()</span></code> method will be used as the training
 step.</li>
-<li><strong>callback</strong> (<em>Callable[[np.ndarray], ...]</em>) &#8211; A function that will
+<li><strong>callback</strong> (<em>Callable</em><em>[</em><em></em><em>[</em><em>np.ndarray</em><em>]</em><em></em><em>, </em><em>..</em><em>]</em><em></em>) &#8211; A function that will
 be called at each optimization step with the current value
 of the variable vector (a vector constructed by flattening
 the free state of each free <code class="code docutils literal"><span class="pre">Param</span></code> and then concatenating
@@ -1731,7 +1689,7 @@ which are constrained to be positive, and its likelihood is
 <span class="gp">... </span>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
 <span class="gp">... </span>        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">numbers</span><span class="o">.</span><span class="n">Number</span><span class="p">)</span>
 <span class="gp">... </span>        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">numbers</span><span class="o">.</span><span class="n">Number</span><span class="p">)</span>
-<span class="gp">... </span>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+<span class="gp">... </span>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 <span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">Param</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">transforms</span><span class="o">.</span><span class="n">Exp</span><span class="p">(</span><span class="mf">0.</span><span class="p">))</span>
 <span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="n">Param</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">transforms</span><span class="o">.</span><span class="n">Exp</span><span class="p">(</span><span class="mf">0.</span><span class="p">))</span>
 <span class="gp">... </span>    <span class="nd">@tf_method</span><span class="p">()</span>
@@ -1741,8 +1699,7 @@ which are constrained to be positive, and its likelihood is
 </pre></div>
 </div>
 <p>We won&#8217;t care about the values of X and Y.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="mf">0.</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="mf">0.</span><span class="p">)</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">])</span>
 </pre></div>
 </div>
 <p class="rubric">TensorFlow optimizers</p>
@@ -2502,7 +2459,7 @@ associated types lower in the tree.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>array_len</strong> (<em>int</em>) &#8211; The maximum number of elements to display
 of each array value.</li>
-<li><strong>fmt</strong> (<em>'fancy', 'plain', 'html'</em>) &#8211; The format for the table.
+<li><strong>fmt</strong> (<em>'fancy'</em><em>, </em><em>'plain'</em><em>, </em><em>'html'</em>) &#8211; The format for the table.
 <code class="code docutils literal"><span class="pre">'fancy'</span></code> returns a table with fancy formatting using box
 drawing characters and ANSI terminal escape codes.
 <code class="code docutils literal"><span class="pre">'plain'</span></code> returns a table using only ascii characters.
@@ -2558,7 +2515,7 @@ value, transform and prior of each parameter.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>fmt</strong> (<em>'fancy', 'plain', 'html'</em>) &#8211; The format for the table.
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>fmt</strong> (<em>'fancy'</em><em>, </em><em>'plain'</em><em>, </em><em>'html'</em>) &#8211; The format for the table.
 <code class="code docutils literal"><span class="pre">'fancy'</span></code> returns a table with fancy formatting using box
 drawing characters and ANSI terminal escape codes.
 <code class="code docutils literal"><span class="pre">'plain'</span></code> returns a table using only ascii characters.
@@ -2608,7 +2565,7 @@ value, transform and prior of each parameter.</td>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>array_len</strong> (<em>int</em>) &#8211; The maximum number of elements to display
 of each array value.</li>
-<li><strong>fmt</strong> (<em>'fancy', 'plain', 'html'</em>) &#8211; The format for the table.
+<li><strong>fmt</strong> (<em>'fancy'</em><em>, </em><em>'plain'</em><em>, </em><em>'html'</em>) &#8211; The format for the table.
 <code class="code docutils literal"><span class="pre">'fancy'</span></code> returns a table with fancy formatting using box
 drawing characters and ANSI terminal escape codes.
 <code class="code docutils literal"><span class="pre">'plain'</span></code> returns a table using only ascii characters.
@@ -2624,6 +2581,24 @@ drawing characters and ANSI terminal escape codes.
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="gptf.core.params.PlaceholderSpec">
+<em class="property">class </em><code class="descclassname">gptf.core.params.</code><code class="descname">PlaceholderSpec</code><span class="sig-paren">(</span><em>dtype</em>, <em>shape</em><span class="sig-paren">)</span><a class="headerlink" href="#gptf.core.params.PlaceholderSpec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">tuple</span></code></p>
+<dl class="attribute">
+<dt id="gptf.core.params.PlaceholderSpec.dtype">
+<code class="descname">dtype</code><a class="headerlink" href="#gptf.core.params.PlaceholderSpec.dtype" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gptf.core.params.PlaceholderSpec.shape">
+<code class="descname">shape</code><a class="headerlink" href="#gptf.core.params.PlaceholderSpec.shape" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
 </dd></dl>
 
 </dd></dl>
@@ -2753,8 +2728,10 @@ when the shape of the data changes; see the setter for <code class="code docutil
 
 <dl class="function">
 <dt id="gptf.core.params.autoflow">
-<code class="descclassname">gptf.core.params.</code><code class="descname">autoflow</code><span class="sig-paren">(</span><em>*placeholder_specs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/params.html#autoflow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gptf.core.params.autoflow" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">gptf.core.params.</code><code class="descname">autoflow</code><span class="sig-paren">(</span><em>*wrapped_args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/params.html#autoflow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gptf.core.params.autoflow" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wraps up a TensorFlow method so that it takes NumPy and gives NumPy.</p>
+<p>NB: Caching will not work properly unless all of the arguments to the
+decorated function are hashable.</p>
 <p>When an autoflowed method is called, we construct placeholders to
 represent the passed arguments, apply <code class="code docutils literal"><span class="pre">tf_method</span></code>
 to the wrapped method and evaluate it on the placeholders to produce
@@ -2768,51 +2745,64 @@ circumstances.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>*placeholder_specs</strong> &#8211; some tuples that specify how the placeholders
-for the arguments of the decorated method should be
-constructed. Each tuple will be used as the arguments to a
-call to <code class="code docutils literal"><span class="pre">tf.placeholder()</span></code>. The first tuple will be used to
-construct the placeholder for the first argument of the
-decorated function, the second for the second, and so on.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>*wrapped_args</strong> (<em>Tuple</em><em>[</em><em>str</em><em>]</em><em></em>) &#8211; <dl class="docutils">
+<dt>A list of names of arguments to wrap.</dt>
+<dd>Supports either seperate strings for each argument name, or one
+string that is a space-separated list of argument names.<div class="code python last highlight-default"><div class="highlight"><pre><span></span><span class="nd">@autoflow</span><span class="p">(</span><span class="s1">&#39;arg1&#39;</span><span class="p">,</span> <span class="s1">&#39;args3&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg1</span><span class="p">,</span> <span class="n">arg2</span><span class="p">,</span> <span class="n">arg3</span><span class="o">=</span><span class="mf">1.</span><span class="p">):</span>
+    <span class="o">...</span>
+
+<span class="nd">@autoflow</span><span class="p">(</span><span class="s1">&#39;arg1 arg2&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg1</span><span class="p">,</span> <span class="n">arg2</span><span class="p">,</span> <span class="n">arg3</span><span class="o">=</span><span class="mf">1.</span><span class="p">):</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+<p>Both of the above calls are precisely the same.</p>
+</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A decorator that autoflows the decorated method.</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A decorator that converts a TensorFlow method to a
+method that takes and returns NumPy array through autoflow magic.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">(Callable)</td>
 </tr>
 </tbody>
 </table>
 <p class="rubric">Examples</p>
 <p>The decorator syntax looks like this:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">MyClass</span><span class="p">(</span><span class="n">Parameterized</span><span class="p">,</span> <span class="n">AttributeTree</span><span class="p">):</span>
-<span class="gp">... </span>    <span class="nd">@autoflow</span><span class="p">((</span><span class="n">tf</span><span class="o">.</span><span class="n">float64</span><span class="p">,),</span> <span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">float64</span><span class="p">,))</span>
+<span class="gp">... </span>    <span class="nd">@autoflow</span><span class="p">(</span><span class="s1">&#39;a b&#39;</span><span class="p">)</span>
 <span class="gp">... </span>    <span class="k">def</span> <span class="nf">tf_add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
 <span class="gp">... </span>        <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
 <span class="gp">...</span>
-<span class="gp">... </span>    <span class="nd">@autoflow</span><span class="p">((</span><span class="n">tf</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="kc">None</span><span class="p">]))</span>
-<span class="gp">... </span>    <span class="k">def</span> <span class="nf">tf_reduce_sum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">):</span>
-<span class="gp">... </span>        <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_sum</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="nd">@autoflow</span><span class="p">(</span><span class="s1">&#39;a b&#39;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">tf_op</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">kind</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s1">&#39;add&#39;</span><span class="p">:</span>
+<span class="gp">... </span>            <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+<span class="gp">... </span>        <span class="k">elif</span> <span class="n">kind</span> <span class="o">==</span> <span class="s1">&#39;subtract&#39;</span><span class="p">:</span>
+<span class="gp">... </span>            <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">subtract</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+<span class="gp">... </span>        <span class="k">else</span><span class="p">:</span>
+<span class="gp">... </span>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;kind must be &#39;add&#39; or &#39;subtract&#39;&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Now we can leverage the mighty power of tensorflow without ever
+<p>Now we can leverage the mighty power of TensorFlow without ever
 having to get our hands dirty:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">MyClass</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">tf_add</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
-<span class="go">14.0</span>
+<span class="go">14</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">4.</span><span class="p">,</span> <span class="mf">5.</span><span class="p">,</span> <span class="mf">6.</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">tf_add</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
 <span class="go">array([ 5., 7., 9.])</span>
 </pre></div>
 </div>
-<p><code class="code docutils literal"><span class="pre">MyClass.tf_reduce_sum</span></code> will only allow arguments that match the
-shape <code class="code docutils literal"><span class="pre">[1,</span> <span class="pre">None]</span></code>; that is, rank 2 tensors whose first dimension
-is <code class="code docutils literal"><span class="pre">5</span></code>.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># shape is (3, 2), compatible with [3, None]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">tf_reduce_sum</span><span class="p">([[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">],</span> <span class="p">[</span><span class="mf">3.</span><span class="p">,</span> <span class="mf">4.</span><span class="p">]])</span>
-<span class="go">array([ 3., 5., 7.])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># shape is (2, 1), not compatible with [3, None]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">tf_reduce_sum</span><span class="p">([[</span><span class="mf">1.</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.</span><span class="p">]])</span>
-<span class="gt">Traceback (most recent call last):</span>
-    <span class="o">...</span>
-<span class="gr">ValueError</span>: <span class="n">Cannot feed value of shape (2, 1)...</span>
+<p><code class="docutils literal"><span class="pre">autoflow</span></code> will create two cached versions of <code class="docutils literal"><span class="pre">MyClass.tf_op</span></code>,
+one for each valid value for the unwrapped argument <code class="docutils literal"><span class="pre">kind</span></code>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">tf_op</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="s1">&#39;add&#39;</span><span class="p">)</span>
+<span class="go">14</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">tf_op</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="s1">&#39;subtract&#39;</span><span class="p">)</span>
+<span class="go">-4</span>
 </pre></div>
 </div>
 <p>Autoflowed methods still work if the device context changes:</p>
@@ -2834,9 +2824,7 @@ is <code class="code docutils literal"><span class="pre">5</span></code>.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">tf_session_target</span> <span class="o">=</span> <span class="n">master</span><span class="o">.</span><span class="n">target</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># autoflow</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">tf_add</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-<span class="go">5.0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">tf_reduce_sum</span><span class="p">([[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">],</span> <span class="p">[</span><span class="mf">4.</span><span class="p">,</span> <span class="mf">5.</span><span class="p">,</span> <span class="mf">6.</span><span class="p">],</span> <span class="p">[</span><span class="mf">7.</span><span class="p">,</span> <span class="mf">8.</span><span class="p">,</span> <span class="mf">9.</span><span class="p">]])</span>
-<span class="go">array([  6., 15., 24.])</span>
+<span class="go">5</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -2854,7 +2842,7 @@ is <code class="code docutils literal"><span class="pre">5</span></code>.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>*properties</strong> (<em>Tuple[str]</em>) &#8211; The (string) names of the properties
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>*properties</strong> (<em>Tuple</em><em>[</em><em>str</em><em>]</em><em></em>) &#8211; The (string) names of the properties
 to override.</td>
 </tr>
 </tbody>
@@ -2914,7 +2902,7 @@ using the property&#8217;s getter/setter/deleter methods.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>shape</strong> (<em>int | (int, int</em>) &#8211; The shape to construct. If <code class="code docutils literal"><span class="pre">int</span></code>, a square
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>shape</strong> (<em>int |</em><em> (</em><em>int</em><em>, </em><em>int</em><em>)</em><em></em>) &#8211; The shape to construct. If <code class="code docutils literal"><span class="pre">int</span></code>, a square
 matrix with <code class="code docutils literal"><span class="pre">shape</span></code> rows and <code class="code docutils literal"><span class="pre">shape</span></code> columns will be constructed.
 Else, a matrix with <code class="code docutils literal"><span class="pre">shape[0]</span></code> rows and <code class="code docutils literal"><span class="pre">shape[1]</span></code> columns will
 be constructed.</td>
@@ -3399,7 +3387,7 @@ attributes are shallowly copied (as references).</p>
 <p class="rubric">Examples</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Example</span><span class="p">(</span><span class="n">Tree</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="gp">... </span>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+<span class="gp">... </span>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 <span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">_children</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="gp">... </span>    <span class="k">def</span> <span class="nf">add_child</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child</span><span class="p">):</span>
 <span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
@@ -3408,8 +3396,8 @@ attributes are shallowly copied (as references).</p>
 <span class="gp">... </span>    <span class="k">def</span> <span class="nf">children</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="gp">... </span>        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">)</span>
 <span class="gp">... </span>    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="gp">... </span>        <span class="n">copy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
-<span class="gp">... </span>        <span class="n">copy</span><span class="o">.</span><span class="n">__dict__</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="gp">... </span>        <span class="n">copy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+<span class="gp">... </span>        <span class="n">copy</span><span class="o">.</span><span class="vm">__dict__</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 <span class="gp">... </span>        <span class="n">copy</span><span class="o">.</span><span class="n">_children</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">]</span>
 <span class="gp">... </span>        <span class="n">copy</span><span class="o">.</span><span class="n">_set_parent</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
 <span class="gp">... </span>        <span class="k">return</span> <span class="n">copy</span>
@@ -3466,7 +3454,7 @@ where <code class="code docutils literal"><span class="pre">x</span></code> is <
 <p class="rubric">Examples</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Example</span><span class="p">(</span><span class="n">Tree</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="gp">... </span>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+<span class="gp">... </span>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 <span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">_children</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="gp">... </span>    <span class="k">def</span> <span class="nf">add_child</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child</span><span class="p">):</span>
 <span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
@@ -3475,8 +3463,8 @@ where <code class="code docutils literal"><span class="pre">x</span></code> is <
 <span class="gp">... </span>    <span class="k">def</span> <span class="nf">children</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="gp">... </span>        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">)</span>
 <span class="gp">... </span>    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="gp">... </span>        <span class="n">copy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
-<span class="gp">... </span>        <span class="n">copy</span><span class="o">.</span><span class="n">__dict__</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="gp">... </span>        <span class="n">copy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+<span class="gp">... </span>        <span class="n">copy</span><span class="o">.</span><span class="vm">__dict__</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 <span class="gp">... </span>        <span class="n">copy</span><span class="o">.</span><span class="n">_children</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">]</span>
 <span class="gp">... </span>        <span class="n">copy</span><span class="o">.</span><span class="n">_set_parent</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
 <span class="gp">... </span>        <span class="k">return</span> <span class="n">copy</span>
@@ -3523,7 +3511,7 @@ parents, starting from the highest parent.</p>
 <p class="rubric">Examples</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Example</span><span class="p">(</span><span class="n">Tree</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="gp">... </span>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+<span class="gp">... </span>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 <span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">_children</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="gp">... </span>    <span class="k">def</span> <span class="nf">add_child</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child</span><span class="p">):</span>
 <span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
@@ -3532,8 +3520,8 @@ parents, starting from the highest parent.</p>
 <span class="gp">... </span>    <span class="k">def</span> <span class="nf">children</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="gp">... </span>        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">)</span>
 <span class="gp">... </span>    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="gp">... </span>        <span class="n">copy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
-<span class="gp">... </span>        <span class="n">copy</span><span class="o">.</span><span class="n">__dict__</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="gp">... </span>        <span class="n">copy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+<span class="gp">... </span>        <span class="n">copy</span><span class="o">.</span><span class="vm">__dict__</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 <span class="gp">... </span>        <span class="n">copy</span><span class="o">.</span><span class="n">_children</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">]</span>
 <span class="gp">... </span>        <span class="n">copy</span><span class="o">.</span><span class="n">_set_parent</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
 <span class="gp">... </span>        <span class="k">return</span> <span class="n">copy</span>
@@ -3562,7 +3550,7 @@ a unique global alias cannot be found, returns <code class="code docutils litera
 <p class="rubric">Examples</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Example</span><span class="p">(</span><span class="n">Tree</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="gp">... </span>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+<span class="gp">... </span>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 <span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">_children</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="gp">... </span>    <span class="k">def</span> <span class="nf">add_child</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child</span><span class="p">):</span>
 <span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
@@ -3571,8 +3559,8 @@ a unique global alias cannot be found, returns <code class="code docutils litera
 <span class="gp">... </span>    <span class="k">def</span> <span class="nf">children</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="gp">... </span>        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">)</span>
 <span class="gp">... </span>    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="gp">... </span>        <span class="n">copy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
-<span class="gp">... </span>        <span class="n">copy</span><span class="o">.</span><span class="n">__dict__</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="gp">... </span>        <span class="n">copy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+<span class="gp">... </span>        <span class="n">copy</span><span class="o">.</span><span class="vm">__dict__</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 <span class="gp">... </span>        <span class="n">copy</span><span class="o">.</span><span class="n">_children</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">]</span>
 <span class="gp">... </span>        <span class="n">copy</span><span class="o">.</span><span class="n">_set_parent</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
 <span class="gp">... </span>        <span class="k">return</span> <span class="n">copy</span>
@@ -3589,7 +3577,7 @@ namespace, if only one such name exists.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">Example</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># doctest does not run these tests in __main__, but if it</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># did, this would return true.</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="ow">not</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span> <span class="ow">or</span> <span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;p&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="ow">not</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span> <span class="ow">or</span> <span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;p&#39;</span>
 <span class="go">True</span>
 </pre></div>
 </div>
@@ -3632,7 +3620,7 @@ as return by <code class="code docutils literal"><span class="pre">child.parent.
 <p class="rubric">Examples</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Example</span><span class="p">(</span><span class="n">Tree</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="gp">... </span>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+<span class="gp">... </span>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 <span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">_children</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="gp">... </span>    <span class="k">def</span> <span class="nf">add_child</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child</span><span class="p">):</span>
 <span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
@@ -3641,8 +3629,8 @@ as return by <code class="code docutils literal"><span class="pre">child.parent.
 <span class="gp">... </span>    <span class="k">def</span> <span class="nf">children</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="gp">... </span>        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">)</span>
 <span class="gp">... </span>    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="gp">... </span>        <span class="n">copy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
-<span class="gp">... </span>        <span class="n">copy</span><span class="o">.</span><span class="n">__dict__</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="gp">... </span>        <span class="n">copy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+<span class="gp">... </span>        <span class="n">copy</span><span class="o">.</span><span class="vm">__dict__</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 <span class="gp">... </span>        <span class="n">copy</span><span class="o">.</span><span class="n">_children</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">]</span>
 <span class="gp">... </span>        <span class="n">copy</span><span class="o">.</span><span class="n">_set_parent</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
 <span class="gp">... </span>        <span class="k">return</span> <span class="n">copy</span>
@@ -3859,10 +3847,35 @@ the cache exceeds the capacity, the least recently used
 </table>
 </dd></dl>
 
+<dl class="function">
+<dt id="gptf.core.trees.get_cache_name">
+<code class="descclassname">gptf.core.trees.</code><code class="descname">get_cache_name</code><span class="sig-paren">(</span><em>method</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/trees.html#get_cache_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gptf.core.trees.get_cache_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the name of the cache of a method.</p>
+<p>If you&#8217;re using this method in code outside <a class="reference internal" href="#module-gptf.core" title="gptf.core"><code class="xref py py-mod docutils literal"><span class="pre">gptf.core</span></code></a>, you&#8217;re
+probably doing something wrong.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>method</strong> (<em>Callable</em>) &#8211; The method to cache.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">(Hashable) The name of the method in the cache.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
 <div class="section" id="module-gptf.core.utils">
 <span id="gptf-core-utils-module"></span><h2>gptf.core.utils module<a class="headerlink" href="#module-gptf.core.utils" title="Permalink to this headline">¶</a></h2>
 <p>Provides utility functions.</p>
+<dl class="class">
+<dt id="gptf.core.utils.FrozenDict">
+<em class="property">class </em><code class="descclassname">gptf.core.utils.</code><code class="descname">FrozenDict</code><span class="sig-paren">(</span><em>dict_</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/utils.html#FrozenDict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gptf.core.utils.FrozenDict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">_abcoll.Mapping</span></code></p>
+<p>Equivalent for FrozenSet but for dicts.</p>
+</dd></dl>
+
 <dl class="class">
 <dt id="gptf.core.utils.LRUCache">
 <em class="property">class </em><code class="descclassname">gptf.core.utils.</code><code class="descname">LRUCache</code><span class="sig-paren">(</span><em>capacity</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/utils.html#LRUCache"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gptf.core.utils.LRUCache" title="Permalink to this definition">¶</a></dt>
@@ -3879,7 +3892,7 @@ the cache exceeds the capacity, the least recently used
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>*tables</strong> (<em>Tuple[str]</em>) &#8211; The fancy tables to combine. Within each table,
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>*tables</strong> (<em>Tuple</em><em>[</em><em>str</em><em>]</em><em></em>) &#8211; The fancy tables to combine. Within each table,
 all lines should be the same length.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A single fancy table, formed by concatenating the provided
@@ -3900,9 +3913,9 @@ tables.</td>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>cols</strong> (<em>Iterable[Iterable[str]]</em>) &#8211; The columns of the table.
+<li><strong>cols</strong> (<em>Iterable</em><em>[</em><em>Iterable</em><em>[</em><em>str</em><em>]</em><em></em><em>]</em><em></em>) &#8211; The columns of the table.
 The columns should be of the same length.</li>
-<li><strong>headings</strong> (<em>Iterable[str]</em>) &#8211; The headings for the columns.
+<li><strong>headings</strong> (<em>Iterable</em><em>[</em><em>str</em><em>]</em><em></em>) &#8211; The headings for the columns.
 <code class="code docutils literal"><span class="pre">len(headings)</span></code> should be the same as <code class="code docutils literal"><span class="pre">len(cols)</span></code>.</li>
 <li><strong>fmt</strong> (<em>'fancy' | 'plain' | 'html'</em>) &#8211; The format for the table.
 <code class="code docutils literal"><span class="pre">'fancy'</span></code> returns a table with fancy formatting using box
@@ -3930,12 +3943,12 @@ drawing characters.
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>func</strong> (<em>Callable[[A0, A1, ..., AN], B]</em>) &#8211; A function.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>func</strong> (<em>Callable</em><em>[</em><em></em><em>[</em><em>A0</em><em>, </em><em>A1</em><em>, </em><em>..</em><em>, </em><em>AN</em><em>]</em><em></em><em>, </em><em>B</em><em>]</em><em></em>) &#8211; A function.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><code class="code docutils literal"><span class="pre">func</span></code>, with the order of
 arguments reversed.</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">(Callable[[AN, AN-1, ..., A1, A0], B])</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">(Callable[[AN, AN-1, .., A1, A0], B])</td>
 </tr>
 </tbody>
 </table>
@@ -4022,8 +4035,8 @@ sequence.</td>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">future.types.newobject.newobject</span></code></p>
 <p>Wraps an object so that its context does nothing.</p>
 <dl class="attribute">
-<dt id="gptf.core.wrappedtf.NullContextWrapper._NullContextWrapped__wrapped">
-<code class="descname">_NullContextWrapped__wrapped</code><a class="headerlink" href="#gptf.core.wrappedtf.NullContextWrapper._NullContextWrapped__wrapped" title="Permalink to this definition">¶</a></dt>
+<dt id="gptf.core.wrappedtf.NullContextWrapper._NullContextWrapper__wrapped">
+<code class="descname">_NullContextWrapper__wrapped</code><a class="headerlink" href="#gptf.core.wrappedtf.NullContextWrapper._NullContextWrapper__wrapped" title="Permalink to this definition">¶</a></dt>
 <dd><p>the wrapped context manager.</p>
 </dd></dl>
 
@@ -4146,7 +4159,7 @@ session matching the session target of the highest parent.</td>
 session in a NullContextWrapper.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">Session</span><span class="p">()</span> <span class="k">as</span> <span class="n">sess</span><span class="p">:</span>
 <span class="gp">... </span>    <span class="n">sess0</span> <span class="o">=</span> <span class="n">w</span><span class="o">.</span><span class="n">get_session</span><span class="p">()</span>
-<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">sess0</span><span class="p">)</span><span class="o">.</span><span class="n">__name__</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">sess0</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
 <span class="gp">... </span>    <span class="n">sess0</span><span class="o">.</span><span class="n">_NullContextWrapper__wrapped</span> <span class="ow">is</span> <span class="n">sess</span>
 <span class="go">NullContextWrapper</span>
 <span class="go">True</span>
@@ -4158,10 +4171,10 @@ there is a default session. Doing so won&#8217;t call the
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">AnnounceSession</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">Session</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="gp">... </span>        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;__enter__ called&#39;</span><span class="p">)</span>
-<span class="gp">... </span>        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__enter__</span><span class="p">()</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__enter__</span><span class="p">()</span>
 <span class="gp">... </span>    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
 <span class="gp">... </span>        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;__exit__ called&#39;</span><span class="p">)</span>
-<span class="gp">... </span>        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__exit__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__exit__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">AnnounceSession</span><span class="p">()</span> <span class="k">as</span> <span class="n">sess</span><span class="p">:</span>
 <span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;before nested with&#39;</span><span class="p">)</span>
 <span class="gp">... </span>    <span class="k">with</span> <span class="n">w</span><span class="o">.</span><span class="n">get_session</span><span class="p">()</span> <span class="k">as</span> <span class="n">sess0</span><span class="p">:</span>
@@ -4294,7 +4307,7 @@ the root is set correctly, anything lower in the tree that uses
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">gptf.core.trees</span> <span class="k">import</span> <span class="n">AttributeTree</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Example</span><span class="p">(</span><span class="n">WrappedTF</span><span class="p">,</span> <span class="n">AttributeTree</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="gp">... </span>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+<span class="gp">... </span>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 <span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">tf_graph</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Graph</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -4495,7 +4508,7 @@ to <code class="code docutils literal"><span class="pre">Example.method_b</span>
 <p>Calls to other tensorflow methods do not cause nested name scopes.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">NestedExample</span><span class="p">(</span><span class="n">WrappedTF</span><span class="p">,</span> <span class="n">AttributeTree</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child</span><span class="p">):</span>
-<span class="gp">... </span>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+<span class="gp">... </span>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 <span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">child</span> <span class="o">=</span> <span class="n">child</span>
 <span class="gp">... </span>    <span class="nd">@tf_method</span><span class="p">()</span>
 <span class="gp">... </span>    <span class="k">def</span> <span class="nf">method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
@@ -4535,6 +4548,11 @@ will be returned.</p>
 </div>
 <div class="section" id="module-gptf.core">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-gptf.core" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="gptf.core.apply_defaults">
+<code class="descclassname">gptf.core.</code><code class="descname">apply_defaults</code><span class="sig-paren">(</span><em>self</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core.html#apply_defaults"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gptf.core.apply_defaults" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </div>
 </div>
 
@@ -4573,15 +4591,15 @@ will be returned.</p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="_sources/gptf.core.txt"
+      <li><a href="_sources/gptf.core.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
@@ -4595,11 +4613,11 @@ will be returned.</p>
       &copy;2016, Blaine Rogers.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
       
       |
-      <a href="_sources/gptf.core.txt"
+      <a href="_sources/gptf.core.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 

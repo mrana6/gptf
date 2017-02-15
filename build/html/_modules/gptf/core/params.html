@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>gptf.core.params &mdash; gptf 1.0.0 documentation</title>
+    <title>gptf.core.params &#8212; gptf 1.1.0 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -14,20 +14,22 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.0.0',
+        VERSION:     '1.1.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="gptf 1.0.0 documentation" href="../../../index.html" />
-    <link rel="up" title="Module code" href="../../index.html" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
    
   <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
@@ -43,25 +45,29 @@
   <h1>Source code for gptf.core.params</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- encoding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;Provides classes that deal with the fetching as setting of parameters.&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">builtins</span> <span class="kn">import</span> <span class="nb">super</span><span class="p">,</span> <span class="nb">object</span><span class="p">,</span> <span class="nb">filter</span><span class="p">,</span> <span class="nb">map</span><span class="p">,</span> <span class="nb">range</span>
-<span class="kn">from</span> <span class="nn">future.utils</span> <span class="kn">import</span> <span class="n">with_metaclass</span>
-<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="n">abstractmethod</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
+<span class="kn">from</span> <span class="nn">builtins</span> <span class="k">import</span> <span class="nb">super</span><span class="p">,</span> <span class="nb">object</span><span class="p">,</span> <span class="nb">filter</span><span class="p">,</span> <span class="nb">map</span><span class="p">,</span> <span class="nb">range</span><span class="p">,</span> <span class="nb">dict</span>
+<span class="kn">from</span> <span class="nn">future.utils</span> <span class="k">import</span> <span class="n">with_metaclass</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="k">import</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">namedtuple</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">wraps</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">gc</span>
-<span class="kn">from</span> <span class="nn">weakref</span> <span class="kn">import</span> <span class="n">WeakSet</span>
-<span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">contextmanager</span>
+<span class="kn">from</span> <span class="nn">weakref</span> <span class="k">import</span> <span class="n">WeakSet</span>
+<span class="kn">from</span> <span class="nn">contextlib</span> <span class="k">import</span> <span class="n">contextmanager</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">inspect</span> <span class="k">import</span> <span class="n">signature</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>  <span class="c1"># python 2.x</span>
+    <span class="kn">from</span> <span class="nn">funcsigs</span> <span class="k">import</span> <span class="n">signature</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="kn">as</span> <span class="nn">tf</span>
-<span class="kn">from</span> <span class="nn">overrides</span> <span class="kn">import</span> <span class="n">overrides</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+<span class="kn">from</span> <span class="nn">overrides</span> <span class="k">import</span> <span class="n">overrides</span>
 
-<span class="kn">from</span> <span class="nn">.trees</span> <span class="kn">import</span> <span class="n">AttributeTree</span><span class="p">,</span> <span class="n">Leaf</span><span class="p">,</span> <span class="n">ListTree</span><span class="p">,</span> <span class="n">Tree</span>
-<span class="kn">from</span> <span class="nn">.transforms</span> <span class="kn">import</span> <span class="n">Transform</span><span class="p">,</span> <span class="n">Identity</span>
-<span class="kn">from</span> <span class="nn">.wrappedtf</span> <span class="kn">import</span> <span class="n">WrappedTF</span><span class="p">,</span> <span class="n">tf_method</span>
-<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">isclassof</span><span class="p">,</span> <span class="n">isattrof</span><span class="p">,</span> <span class="n">is_array_like</span>
-<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">construct_table</span><span class="p">,</span> <span class="n">combine_fancy_tables</span><span class="p">,</span> <span class="n">prefix_lines</span>
+<span class="kn">from</span> <span class="nn">.trees</span> <span class="k">import</span> <span class="n">AttributeTree</span><span class="p">,</span> <span class="n">Leaf</span><span class="p">,</span> <span class="n">ListTree</span><span class="p">,</span> <span class="n">Tree</span><span class="p">,</span> <span class="n">get_cache_name</span>
+<span class="kn">from</span> <span class="nn">.transforms</span> <span class="k">import</span> <span class="n">Transform</span><span class="p">,</span> <span class="n">Identity</span>
+<span class="kn">from</span> <span class="nn">.wrappedtf</span> <span class="k">import</span> <span class="n">WrappedTF</span><span class="p">,</span> <span class="n">tf_method</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="k">import</span> <span class="n">isclassof</span><span class="p">,</span> <span class="n">isattrof</span><span class="p">,</span> <span class="n">is_array_like</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="k">import</span> <span class="n">construct_table</span><span class="p">,</span> <span class="n">combine_fancy_tables</span><span class="p">,</span> <span class="n">prefix_lines</span>
 
 
 <span class="c1">#TODO: Implement priors.</span>
@@ -99,7 +105,7 @@
 <span class="sd">                value for `.on_dtype_change`. Defaults to &#39;raise&#39;.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">on_shape_change</span> <span class="o">=</span> <span class="n">on_shape_change</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">on_dtype_change</span> <span class="o">=</span> <span class="n">on_dtype_change</span>
 
@@ -118,7 +124,7 @@
         <span class="sd">&quot;&quot;&quot;The (NumPy) value of the object.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_value</span><span class="p">()</span>
 
-    <span class="nd">@value.setter</span>
+    <span class="nd">@value</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Sets the value of the data.</span>
 
@@ -179,7 +185,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">value</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
             <span class="k">pass</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_shape_change</span> <span class="o">==</span> <span class="s1">&#39;raise&#39;</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">ShapeChangeError</span><span class="p">(</span><span class="s2">&quot;cannot change shape of {}&quot;</span>\
+            <span class="k">raise</span> <span class="n">ShapeChangeError</span><span class="p">(</span><span class="s2">&quot;cannot change shape of </span><span class="si">{}</span><span class="s2">&quot;</span>\
                     <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">long_name</span><span class="p">))</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_shape_change</span> <span class="o">==</span> <span class="s1">&#39;recompile&#39;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">clear_ancestor_caches</span><span class="p">()</span>
@@ -195,7 +201,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">value</span><span class="o">.</span><span class="n">dtype</span><span class="p">:</span>
             <span class="k">pass</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_dtype_change</span> <span class="o">==</span> <span class="s1">&#39;raise&#39;</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">DTypeChangeError</span><span class="p">(</span><span class="s2">&quot;cannot change dtype of {}&quot;</span>\
+            <span class="k">raise</span> <span class="n">DTypeChangeError</span><span class="p">(</span><span class="s2">&quot;cannot change dtype of </span><span class="si">{}</span><span class="s2">&quot;</span>\
                     <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">long_name</span><span class="p">))</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_dtype_change</span> <span class="o">==</span> <span class="s1">&#39;recompile&#39;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">clear_ancestor_caches</span><span class="p">()</span>
@@ -211,12 +217,12 @@
         <span class="sd">&quot;&quot;&quot;The action to take when the value changes.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_on_shape_change</span>
 
-    <span class="nd">@on_shape_change.setter</span>
+    <span class="nd">@on_shape_change</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">on_shape_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Checks that the new value of on_shape_change is valid.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__ON_SHAPE_CHANGE_VALUES</span><span class="p">:</span>
             <span class="n">valuestr</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">repr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__ON_SHAPE_CHANGE_VALUES</span><span class="p">))</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;on_shape_change must be one of {}&quot;</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;on_shape_change must be one of </span><span class="si">{}</span><span class="s2">&quot;</span>
                     <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">valuestr</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_on_shape_change</span> <span class="o">=</span> <span class="n">value</span>
 
@@ -225,12 +231,12 @@
         <span class="sd">&quot;&quot;&quot;The action to take when the dtype changes.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_on_dtype_change</span>
 
-    <span class="nd">@on_dtype_change.setter</span>
+    <span class="nd">@on_dtype_change</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">on_dtype_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Checks that the new value of on_dtype_change is valid.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__ON_DTYPE_CHANGE_VALUES</span><span class="p">:</span>
             <span class="n">valuestr</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">repr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__ON_DTYPE_CHANGE_VALUES</span><span class="p">))</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;on_shape_change must be one of {}&quot;</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;on_shape_change must be one of </span><span class="si">{}</span><span class="s2">&quot;</span>
                     <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">valuestr</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_on_dtype_change</span> <span class="o">=</span> <span class="n">value</span></div>
 
@@ -240,7 +246,7 @@
         <span class="k">pass</span></div>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_shared</span> <span class="o">=</span> <span class="n">Proxy</span><span class="o">.</span><span class="n">Shared</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_shared</span><span class="o">.</span><span class="n">copies</span> <span class="o">=</span> <span class="n">WeakSet</span><span class="p">([</span><span class="bp">self</span><span class="p">])</span>
 
@@ -320,7 +326,7 @@
                     <span class="k">with</span> <span class="n">no_gc</span><span class="p">():</span>
                         <span class="k">for</span> <span class="n">copy</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shared</span><span class="o">.</span><span class="n">copies</span><span class="p">:</span>
                             <span class="n">wrappedproperty</span><span class="o">.</span><span class="n">fdel</span><span class="p">(</span><span class="n">copy</span><span class="p">)</span>
-                <span class="n">doc</span> <span class="o">=</span> <span class="n">wrappedproperty</span><span class="o">.</span><span class="n">__doc__</span>
+                <span class="n">doc</span> <span class="o">=</span> <span class="n">wrappedproperty</span><span class="o">.</span><span class="vm">__doc__</span>
                 <span class="n">prop</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">getprop</span><span class="p">,</span> <span class="n">setprop</span><span class="p">,</span> <span class="n">delprop</span><span class="p">,</span> <span class="n">doc</span><span class="p">)</span>
                 <span class="k">return</span> <span class="n">prop</span>
             <span class="nb">setattr</span><span class="p">(</span><span class="n">class_</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">get_property</span><span class="p">())</span>
@@ -338,7 +344,7 @@
 <span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_shared</span><span class="o">.</span><span class="n">cache</span> <span class="o">=</span> <span class="p">{}</span>
 
     <span class="nd">@property</span>
@@ -346,11 +352,11 @@
         <span class="sd">&quot;&quot;&quot;Contains cached tensorflow functions etc.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shared</span><span class="o">.</span><span class="n">cache</span>
 
-    <span class="nd">@cache.setter</span>
+    <span class="nd">@cache</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">cache</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_shared</span><span class="o">.</span><span class="n">cache</span> <span class="o">=</span> <span class="n">value</span>
 
-    <span class="nd">@cache.deleter</span>
+    <span class="nd">@cache</span><span class="o">.</span><span class="n">deleter</span>
     <span class="k">def</span> <span class="nf">cache</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shared</span><span class="o">.</span><span class="n">cache</span>
 
@@ -643,13 +649,13 @@
 <span class="sd">            **kwargs: passed through to the constructor of WrappedValue.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_shared</span><span class="o">.</span><span class="n">numpy_value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">initial_value</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_shared</span><span class="o">.</span><span class="n">transform</span> <span class="o">=</span> <span class="n">transform</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_shared</span><span class="o">.</span><span class="n">fixed</span> <span class="o">=</span> <span class="bp">False</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_session</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_shared</span><span class="o">.</span><span class="n">fixed</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_session</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="nd">@tf_method</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="nd">@tf_method</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="nd">@overrides</span>
     <span class="k">def</span> <span class="nf">_get_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_variable</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_session</span><span class="p">:</span>
@@ -657,7 +663,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shared</span><span class="o">.</span><span class="n">numpy_value</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
-    <span class="nd">@tf_method</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="nd">@tf_method</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="nd">@overrides</span>
     <span class="k">def</span> <span class="nf">_set_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_variable</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_session</span><span class="p">:</span>
@@ -669,7 +675,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_shared</span><span class="o">.</span><span class="n">numpy_value</span><span class="p">[</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
 
     <span class="nd">@property</span>
-    <span class="nd">@tf_method</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">rename_output</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="nd">@tf_method</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">rename_output</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">tensor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns a tensor representing the value of the parameter.</span>
 <span class="sd">        </span>
@@ -691,7 +697,7 @@
         <span class="k">return</span> <span class="p">{}</span>
 
     <span class="nd">@property</span>
-    <span class="nd">@tf_method</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">rename_output</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="nd">@tf_method</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">rename_output</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">free_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns a variable that maps to the free state of the parameter.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">fixed</span><span class="p">:</span>
@@ -705,7 +711,7 @@
         <span class="sd">&quot;&quot;&quot;Whether or not the parameter is fixed.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shared</span><span class="o">.</span><span class="n">fixed</span>
 
-    <span class="nd">@fixed.setter</span>
+    <span class="nd">@fixed</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">fixed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_shared</span><span class="o">.</span><span class="n">fixed</span> <span class="o">=</span> <span class="n">value</span>
 
@@ -714,7 +720,7 @@
         <span class="sd">&quot;&quot;&quot;The transform between the free space and value space.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shared</span><span class="o">.</span><span class="n">transform</span>
 
-    <span class="nd">@transform.setter</span>
+    <span class="nd">@transform</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Sets the transform of the parameter.</span>
 
@@ -753,7 +759,7 @@
 <div class="viewcode-block" id="Param.on_session_birth"><a class="viewcode-back" href="../../../public_api.html#gptf.core.params.Param.on_session_birth">[docs]</a>    <span class="k">def</span> <span class="nf">on_session_birth</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_session</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                <span class="s2">&quot;{} is already initialised in another session, {}.&quot;</span>
+                <span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> is already initialised in another session, </span><span class="si">{}</span><span class="s2">.&quot;</span>
                 <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">long_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_session</span><span class="p">)</span>
             <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_session</span> <span class="o">=</span> <span class="n">session</span>
@@ -765,10 +771,10 @@
 <div class="viewcode-block" id="Param.on_session_death"><a class="viewcode-back" href="../../../public_api.html#gptf.core.params.Param.on_session_death">[docs]</a>    <span class="k">def</span> <span class="nf">on_session_death</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_session</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">session</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                <span class="s2">&quot;{} is not initialised in {}&quot;</span>
+                <span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> is not initialised in </span><span class="si">{}</span><span class="s2">&quot;</span>
                 <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">long_name</span><span class="p">,</span> <span class="n">session</span><span class="p">)</span>
             <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_session</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_session</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_variable</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_shared</span><span class="o">.</span><span class="n">numpy_value</span><span class="p">[</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tensor</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">on_session_death</span><span class="p">(</span><span class="n">session</span><span class="p">)</span></div>
@@ -782,7 +788,7 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">clear_cache</span><span class="p">()</span></div>
 
     <span class="nd">@property</span>
-    <span class="nd">@tf_method</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">rename_output</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="nd">@tf_method</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">rename_output</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">initializer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Initialises the internal `tf.Variable` to the correct value.</span>
 <span class="sd">        </span>
@@ -795,7 +801,7 @@
             <span class="n">free_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">np_backward</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_shared</span><span class="o">.</span><span class="n">numpy_value</span><span class="p">)</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_variable</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">free_state</span><span class="p">)</span>
             
-    <span class="nd">@tf_method</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="nd">@tf_method</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">_ensure_variable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Creates a variable if necessary.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_variable</span><span class="p">:</span>
@@ -810,9 +816,9 @@
 <span class="sd">        `if self._variable`.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shared</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;_Param__variable&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shared</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;_Param__variable&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
-    <span class="nd">@_variable.setter</span>
+    <span class="nd">@_variable</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">_variable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Sets the variable.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_shared</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="s1">&#39;_Param__variable&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span></div>
@@ -917,9 +923,9 @@
 <span class="sd">            **kwargs: passed through to the constructor of WrappedValue.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_shared</span><span class="o">.</span><span class="n">numpy_value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">initial_value</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_placeholder</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_placeholder</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="nd">@overrides</span>
     <span class="k">def</span> <span class="nf">_get_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -943,15 +949,15 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">_placeholder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shared</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;_DataHolder__placeholder&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shared</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;_DataHolder__placeholder&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
-    <span class="nd">@_placeholder.setter</span>
+    <span class="nd">@_placeholder</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">_placeholder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_shared</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="s1">&#39;_DataHolder__placeholder&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
 
-    <span class="nd">@tf_method</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="nd">@tf_method</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">_assert_placeholder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_placeholder</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_placeholder</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">dtype</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">as_dtype</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_shared</span><span class="o">.</span><span class="n">numpy_value</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_placeholder</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">placeholder</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span> <span class="c1">#self._shared.numpy_value.shape)</span></div>
 
@@ -997,15 +1003,15 @@
     <span class="n">ARRAY_DISPLAY_LENGTH</span> <span class="o">=</span> <span class="mi">5</span>  <span class="c1">#: The default array display length.</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_fixed</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fixed</span> <span class="o">=</span> <span class="kc">False</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">fixed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Whether or not params lower in the heirarchy should be fixed.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fixed</span>
 
-    <span class="nd">@fixed.setter</span>
+    <span class="nd">@fixed</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">fixed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="n">iterator</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="nb">next</span><span class="p">(</span><span class="n">iterator</span><span class="p">)</span>  <span class="c1"># skip self to prevent recursion bugs</span>
@@ -1052,7 +1058,7 @@
 <span class="sd">            (str): A summary of this object&#39;s parameters and data.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">heading</span> <span class="o">=</span> <span class="s2">&quot;Parameterized object {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">long_name</span><span class="p">)</span>
+        <span class="n">heading</span> <span class="o">=</span> <span class="s2">&quot;Parameterized object </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">long_name</span><span class="p">)</span>
         <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_summary</span><span class="p">(</span><span class="n">array_len</span><span class="p">,</span> <span class="n">fmt</span><span class="p">)</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_summary</span><span class="p">(</span><span class="n">array_len</span><span class="p">,</span> <span class="n">fmt</span><span class="p">)</span>
 
@@ -1089,13 +1095,13 @@
             <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">fmt</span> <span class="o">==</span> <span class="s2">&quot;html&quot;</span><span class="p">:</span>
             <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;&lt;table id=&#39;parameterized&#39; width=100%&gt;&quot;</span><span class="p">,</span>
-                     <span class="s2">&quot;  &lt;tr&gt;&lt;th&gt;{}&lt;/th&gt;&lt;/tr&gt;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">heading</span><span class="p">)]</span>
+                     <span class="s2">&quot;  &lt;tr&gt;&lt;th&gt;</span><span class="si">{}</span><span class="s2">&lt;/th&gt;&lt;/tr&gt;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">heading</span><span class="p">)]</span>
             <span class="k">if</span> <span class="n">params</span><span class="p">:</span>
                 <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Params&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;&quot;</span><span class="p">)</span>
-                <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;  &lt;tr&gt;&lt;td&gt;{}&lt;/td&gt;&lt;/tr&gt;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">params</span><span class="p">))</span>
+                <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;  &lt;tr&gt;&lt;td&gt;</span><span class="si">{}</span><span class="s2">&lt;/td&gt;&lt;/tr&gt;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">params</span><span class="p">))</span>
             <span class="k">if</span> <span class="n">data</span><span class="p">:</span>
                 <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Data&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;&quot;</span><span class="p">)</span>
-                <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;  &lt;tr&gt;&lt;td&gt;{}&lt;/td&gt;&lt;/tr&gt;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+                <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;  &lt;tr&gt;&lt;td&gt;</span><span class="si">{}</span><span class="s2">&lt;/td&gt;&lt;/tr&gt;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
             <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&lt;/table&gt;&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span></div>
 
@@ -1250,7 +1256,7 @@
         <span class="k">def</span> <span class="nf">tostring</span><span class="p">(</span><span class="n">arr</span><span class="p">):</span>
             <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asscalar</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
-                <span class="k">return</span> <span class="s2">&quot;{:.3f}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+                <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{:.3f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
@@ -1320,7 +1326,7 @@
                 <span class="c1"># okay to assign to curr.value</span>
                 <span class="n">curr</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
                 <span class="k">return</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div></div>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div></div>
 
 <div class="viewcode-block" id="ParamList"><a class="viewcode-back" href="../../../public_api.html#gptf.core.params.ParamList">[docs]</a><span class="k">class</span> <span class="nc">ParamList</span><span class="p">(</span><span class="n">Parameterized</span><span class="p">,</span> <span class="n">ListTree</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A list of `Param` or `DataHolder` objects.</span>
@@ -1357,7 +1363,7 @@
 <span class="sd">                value for the children of this paramlist.</span>
 <span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">ListTree</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">initial_values</span><span class="p">)</span>
 
     <span class="nd">@overrides</span>
@@ -1370,10 +1376,15 @@
             <span class="c1"># okay to assign to curr.value</span>
             <span class="n">curr</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__setitem__</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__setitem__</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="autoflow"><a class="viewcode-back" href="../../../public_api.html#gptf.core.params.autoflow">[docs]</a><span class="k">def</span> <span class="nf">autoflow</span><span class="p">(</span><span class="o">*</span><span class="n">placeholder_specs</span><span class="p">):</span>
+<span class="n">PlaceholderSpec</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;PlaceholderSpec&#39;</span><span class="p">,</span> <span class="s1">&#39;dtype shape&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="autoflow"><a class="viewcode-back" href="../../../public_api.html#gptf.core.params.autoflow">[docs]</a><span class="k">def</span> <span class="nf">autoflow</span><span class="p">(</span><span class="o">*</span><span class="n">wrapped_args</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Wraps up a TensorFlow method so that it takes NumPy and gives NumPy.</span>
+
+<span class="sd">    NB: Caching will not work properly unless all of the arguments to the</span>
+<span class="sd">    decorated function are hashable.</span>
 
 <span class="sd">    When an autoflowed method is called, we construct placeholders to </span>
 <span class="sd">    represent the passed arguments, apply `tf_method` </span>
@@ -1387,51 +1398,61 @@
 <span class="sd">    circumstances.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        *placeholder_specs: some tuples that specify how the placeholders </span>
-<span class="sd">            for the arguments of the decorated method should be </span>
-<span class="sd">            constructed. Each tuple will be used as the arguments to a </span>
-<span class="sd">            call to `tf.placeholder()`. The first tuple will be used to</span>
-<span class="sd">            construct the placeholder for the first argument of the</span>
-<span class="sd">            decorated function, the second for the second, and so on.</span>
+<span class="sd">        *wrapped_args (Tuple[str]): A list of names of arguments to wrap. </span>
+<span class="sd">            Supports either seperate strings for each argument name, or one </span>
+<span class="sd">            string that is a space-separated list of argument names.</span>
+
+<span class="sd">            .. code:: python</span>
+
+<span class="sd">                @autoflow(&#39;arg1&#39;, &#39;args3&#39;)</span>
+<span class="sd">                def method(self, arg1, arg2, arg3=1.):</span>
+<span class="sd">                    ...</span>
+
+<span class="sd">                @autoflow(&#39;arg1 arg2&#39;)</span>
+<span class="sd">                def method(self, arg1, arg2, arg3=1.):</span>
+<span class="sd">                    ...</span>
+
+<span class="sd">           Both of the above calls are precisely the same.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        A decorator that autoflows the decorated method.</span>
+<span class="sd">        (Callable): A decorator that converts a TensorFlow method to a </span>
+<span class="sd">        method that takes and returns NumPy array through autoflow magic.</span>
 
 <span class="sd">    Examples:</span>
 <span class="sd">        The decorator syntax looks like this:</span>
 
 <span class="sd">        &gt;&gt;&gt; class MyClass(Parameterized, AttributeTree):</span>
-<span class="sd">        ...     @autoflow((tf.float64,), (tf.float64,))</span>
+<span class="sd">        ...     @autoflow(&#39;a b&#39;)</span>
 <span class="sd">        ...     def tf_add(self, a, b):</span>
 <span class="sd">        ...         return tf.add(a, b)</span>
 <span class="sd">        ...</span>
-<span class="sd">        ...     @autoflow((tf.float64, [3, None]))</span>
-<span class="sd">        ...     def tf_reduce_sum(self, a):</span>
-<span class="sd">        ...         return tf.reduce_sum(a, 1)</span>
+<span class="sd">        ...     @autoflow(&#39;a b&#39;)</span>
+<span class="sd">        ...     def tf_op(self, a, b, kind):</span>
+<span class="sd">        ...         if kind == &#39;add&#39;:</span>
+<span class="sd">        ...             return tf.add(a, b)</span>
+<span class="sd">        ...         elif kind == &#39;subtract&#39;:</span>
+<span class="sd">        ...             return tf.subtract(a, b)</span>
+<span class="sd">        ...         else:</span>
+<span class="sd">        ...             raise ValueError(&quot;kind must be &#39;add&#39; or &#39;subtract&#39;&quot;)</span>
 
-<span class="sd">        Now we can leverage the mighty power of tensorflow without ever</span>
+<span class="sd">        Now we can leverage the mighty power of TensorFlow without ever</span>
 <span class="sd">        having to get our hands dirty:</span>
 
 <span class="sd">        &gt;&gt;&gt; m = MyClass()</span>
 <span class="sd">        &gt;&gt;&gt; m.tf_add(5, 9)</span>
-<span class="sd">        14.0</span>
+<span class="sd">        14</span>
 <span class="sd">        &gt;&gt;&gt; a = np.array([1., 2., 3.])</span>
 <span class="sd">        &gt;&gt;&gt; b = np.array([4., 5., 6.])</span>
 <span class="sd">        &gt;&gt;&gt; m.tf_add(a, b)</span>
 <span class="sd">        array([ 5., 7., 9.])</span>
 
-<span class="sd">        `MyClass.tf_reduce_sum` will only allow arguments that match the</span>
-<span class="sd">        shape `[1, None]`; that is, rank 2 tensors whose first dimension</span>
-<span class="sd">        is `5`.</span>
+<span class="sd">        ``autoflow`` will create two cached versions of ``MyClass.tf_op``,</span>
+<span class="sd">        one for each valid value for the unwrapped argument ``kind``:</span>
 
-<span class="sd">        &gt;&gt;&gt; # shape is (3, 2), compatible with [3, None]</span>
-<span class="sd">        &gt;&gt;&gt; m.tf_reduce_sum([[1., 2.], [2., 3.], [3., 4.]])</span>
-<span class="sd">        array([ 3., 5., 7.])</span>
-<span class="sd">        &gt;&gt;&gt; # shape is (2, 1), not compatible with [3, None]</span>
-<span class="sd">        &gt;&gt;&gt; m.tf_reduce_sum([[1.], [2.]])</span>
-<span class="sd">        Traceback (most recent call last):</span>
-<span class="sd">            ...</span>
-<span class="sd">        ValueError: Cannot feed value of shape (2, 1)...</span>
+<span class="sd">        &gt;&gt;&gt; m.tf_op(5, 9, &#39;add&#39;)</span>
+<span class="sd">        14</span>
+<span class="sd">        &gt;&gt;&gt; m.tf_op(5, 9, &#39;subtract&#39;)</span>
+<span class="sd">        -4</span>
 
 <span class="sd">        Autoflowed methods still work if the device context changes:</span>
 
@@ -1453,14 +1474,16 @@
 <span class="sd">        &gt;&gt;&gt; m.tf_session_target = master.target</span>
 <span class="sd">        &gt;&gt;&gt; # autoflow</span>
 <span class="sd">        &gt;&gt;&gt; m.tf_add(3, 2)</span>
-<span class="sd">        5.0</span>
-<span class="sd">        &gt;&gt;&gt; m.tf_reduce_sum([[1., 2., 3.], [4., 5., 6.], [7., 8., 9.]])</span>
-<span class="sd">        array([  6., 15., 24.])</span>
+<span class="sd">        5</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">wrapped_args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="s1">&#39; &#39;</span> <span class="ow">in</span> <span class="n">wrapped_args</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+        <span class="n">wrapped_args</span> <span class="o">=</span> <span class="n">wrapped_args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+    <span class="n">wrapped_args</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">wrapped_args</span><span class="p">)</span>
+
     <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">method</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;A decorator that autoflows a method.</span>
-<span class="sd">        </span>
+        <span class="sd">&quot;&quot;&quot;A decorater than converts a TensorFlow method to NumPy.</span>
+
 <span class="sd">        Args:</span>
 <span class="sd">            method (Callable[[Parameterized, ...], tf.Tensor]): A method </span>
 <span class="sd">                of a `Parameterized` that returns a TensorFlow op.</span>
@@ -1470,27 +1493,87 @@
 <span class="sd">            returns a NumPy array through autoflow magic.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nd">@tf_method</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+        <span class="n">sig</span> <span class="o">=</span> <span class="n">signature</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">arg</span> <span class="ow">in</span> <span class="n">sig</span><span class="o">.</span><span class="n">parameters</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">wrapped_args</span><span class="p">),</span>\
+                <span class="p">(</span><span class="s1">&#39;args </span><span class="si">{}</span><span class="s1"> must appear in parameters of &#39;</span>
+                 <span class="s1">&#39;wrapped function: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">wrapped_args</span><span class="p">,</span> <span class="n">sig</span><span class="p">)</span>
+
         <span class="nd">@wraps</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
-        <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="o">*</span><span class="n">np_args</span><span class="p">):</span>
-            <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;_Parameterized__autoflow__{}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">method</span><span class="o">.</span><span class="n">__name__</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">instance</span><span class="o">.</span><span class="n">cache</span><span class="p">:</span>
-                <span class="n">storage</span> <span class="o">=</span> <span class="n">instance</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+        <span class="nd">@tf_method</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">rename_output</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># we do our own caching</span>
+        <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="c1"># deal with arguments</span>
+            <span class="n">kwarg_specs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;autoflow_specs&#39;</span><span class="p">,</span> <span class="p">{})</span>
+            <span class="n">binding</span> <span class="o">=</span> <span class="n">sig</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">binding</span><span class="o">.</span><span class="n">apply_defaults</span><span class="p">()</span>
+
+            <span class="c1"># Get placeholder / other specs for arguments.</span>
+            <span class="n">specs</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">sig</span><span class="o">.</span><span class="n">parameters</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">wrapped_args</span> <span class="ow">and</span> <span class="n">binding</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">np_arg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">binding</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+                    <span class="n">specs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">PlaceholderSpec</span><span class="p">(</span><span class="n">np_arg</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">np_arg</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+            <span class="n">specs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwarg_specs</span><span class="p">)</span>
+
+            <span class="c1"># Set up placeholder cache</span>
+            <span class="n">ph_cache</span> <span class="o">=</span> <span class="s1">&#39;_autoflow__</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">method</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">ph_cache</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">instance</span><span class="o">.</span><span class="n">cache</span><span class="p">:</span>
+                <span class="n">instance</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="n">ph_cache</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+            <span class="c1"># Check for compatible cached placeholders</span>
+            <span class="n">found</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">for</span> <span class="n">cached_specs</span> <span class="ow">in</span> <span class="n">instance</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="n">ph_cache</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">():</span>
+                <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">_compatible</span><span class="p">(</span><span class="n">specs</span><span class="p">[</span><span class="n">n</span><span class="p">],</span> <span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">cached_specs</span><span class="p">):</span>
+                    <span class="n">found</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="n">specs</span> <span class="o">=</span> <span class="n">cached_specs</span>
+                    <span class="k">break</span>
+                <span class="k">elif</span> <span class="nb">all</span><span class="p">(</span><span class="n">_compatible</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">specs</span><span class="p">[</span><span class="n">n</span><span class="p">])</span> <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">cached_specs</span><span class="p">):</span>
+                    <span class="n">subcache</span> <span class="o">=</span> <span class="n">instance</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">get_cache_name</span><span class="p">(</span><span class="n">method</span><span class="p">),</span> <span class="p">{})</span>
+                    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">subcache</span><span class="o">.</span><span class="n">copy</span><span class="p">():</span>
+                        <span class="n">cached_args</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">_matches</span><span class="p">(</span><span class="n">cached_args</span><span class="p">,</span> <span class="n">cached_specs</span><span class="p">):</span>
+                            <span class="k">del</span> <span class="n">subcache</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+                    <span class="k">del</span> <span class="n">instance</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="n">ph_cache</span><span class="p">][</span><span class="n">cached_specs</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">found</span><span class="p">:</span>
+                <span class="n">specs</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">specs</span><span class="o">.</span><span class="n">items</span><span class="p">()))</span>
+                <span class="n">placeholders</span> <span class="o">=</span> <span class="p">{</span><span class="n">n</span><span class="p">:</span> <span class="n">tf</span><span class="o">.</span><span class="n">placeholder</span><span class="p">(</span><span class="o">*</span><span class="n">spec</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">spec</span> <span class="ow">in</span> <span class="n">specs</span><span class="p">}</span>
+                <span class="n">instance</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="n">ph_cache</span><span class="p">][</span><span class="n">specs</span><span class="p">]</span> <span class="o">=</span> <span class="n">placeholders</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">tf_args</span> <span class="o">=</span> <span class="p">[</span><span class="n">tf</span><span class="o">.</span><span class="n">placeholder</span><span class="p">(</span><span class="o">*</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">placeholder_specs</span><span class="p">]</span>
-                <span class="n">storage</span> <span class="o">=</span>\
-                        <span class="p">{</span> <span class="s1">&#39;op&#39;</span><span class="p">:</span> <span class="n">method</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="o">*</span><span class="n">tf_args</span><span class="p">)</span>
-                        <span class="p">,</span> <span class="s1">&#39;tf_args&#39;</span><span class="p">:</span> <span class="n">tf_args</span>
-                        <span class="p">}</span>
-                <span class="n">instance</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">storage</span>
-            <span class="n">feed_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">storage</span><span class="p">[</span><span class="s1">&#39;tf_args&#39;</span><span class="p">],</span> <span class="n">np_args</span><span class="p">))</span>
+                <span class="n">placeholders</span> <span class="o">=</span> <span class="n">instance</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="n">ph_cache</span><span class="p">][</span><span class="n">specs</span><span class="p">]</span>
+
+            <span class="n">feed_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">placeholders</span><span class="p">[</span><span class="n">name</span><span class="p">]:</span> <span class="n">binding</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+                         <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">placeholders</span><span class="p">}</span>
             <span class="n">feed_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">instance</span><span class="o">.</span><span class="n">feed_dict</span><span class="p">)</span>
             
+            <span class="n">binding</span><span class="o">.</span><span class="n">arguments</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">placeholders</span><span class="p">)</span>
+
+            <span class="c1"># add tf_method wrapper for memoisation etc</span>
+            <span class="n">op</span> <span class="o">=</span> <span class="n">tf_method</span><span class="p">()(</span><span class="n">method</span><span class="p">)(</span><span class="o">*</span><span class="n">binding</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">binding</span><span class="o">.</span><span class="n">kwargs</span><span class="p">)</span>
+
             <span class="k">with</span> <span class="n">instance</span><span class="o">.</span><span class="n">get_session</span><span class="p">()</span> <span class="k">as</span> <span class="n">sess</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">sess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">storage</span><span class="p">[</span><span class="s1">&#39;op&#39;</span><span class="p">],</span> <span class="n">feed_dict</span><span class="o">=</span><span class="n">feed_dict</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">sess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">op</span><span class="p">,</span> <span class="n">feed_dict</span><span class="o">=</span><span class="n">feed_dict</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">wrapper</span>
     <span class="k">return</span> <span class="n">decorator</span></div>
 
+<span class="k">def</span> <span class="nf">_matches</span><span class="p">(</span><span class="n">args_dict</span><span class="p">,</span> <span class="n">specs</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">spec</span> <span class="ow">in</span> <span class="n">specs</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">args_dict</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">_matches_spec</span><span class="p">(</span><span class="n">args_dict</span><span class="p">[</span><span class="n">name</span><span class="p">],</span> <span class="n">spec</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="kc">True</span>
+
+<span class="k">def</span> <span class="nf">_matches_spec</span><span class="p">(</span><span class="n">ph</span><span class="p">,</span> <span class="n">spec</span><span class="p">):</span>
+    <span class="n">spec_name</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="k">if</span> <span class="n">spec</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">spec</span><span class="o">.</span><span class="n">name</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">ph</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">spec</span><span class="o">.</span><span class="n">dtype</span> <span class="ow">and</span> 
+            <span class="n">ph</span><span class="o">.</span><span class="n">get_shape</span><span class="p">()</span> <span class="o">==</span> <span class="n">spec</span><span class="o">.</span><span class="n">shape</span> <span class="ow">and</span>
+            <span class="n">spec</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">ph</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">_compatible</span><span class="p">(</span><span class="n">spec0</span><span class="p">,</span> <span class="n">spec1</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">can_cast</span><span class="p">(</span><span class="n">spec0</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">spec1</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span> <span class="ow">and</span> 
+            <span class="n">_broadcastable</span><span class="p">(</span><span class="n">spec0</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">spec1</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+
+<span class="k">def</span> <span class="nf">_broadcastable</span><span class="p">(</span><span class="n">shape0</span><span class="p">,</span> <span class="n">shape1</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="n">a</span> <span class="ow">in</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">}</span> <span class="ow">or</span> <span class="n">b</span> <span class="ow">in</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">}</span> <span class="ow">or</span> <span class="n">a</span> <span class="o">==</span> <span class="n">b</span> 
+               <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">shape0</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">shape1</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
 </pre></div>
 
           </div>
@@ -1502,6 +1585,8 @@
 <ul>
   <li><a href="../../../index.html">Documentation overview</a><ul>
   <li><a href="../../index.html">Module code</a><ul>
+  <li><a href="../core.html">gptf.core</a><ul>
+  </ul></li>
   </ul></li>
   </ul></li>
 </ul>
@@ -1509,8 +1594,8 @@
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../../../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
@@ -1524,8 +1609,8 @@
       &copy;2016, Blaine Rogers.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
       
     </div>
 

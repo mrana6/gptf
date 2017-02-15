@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>gptf package &mdash; gptf 1.0.0 documentation</title>
+    <title>gptf package &#8212; gptf 1.1.0 documentation</title>
     
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,19 +14,22 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '1.0.0',
+        VERSION:     '1.1.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="gptf 1.0.0 documentation" href="index.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
@@ -348,7 +351,7 @@ of the <span class="math">\(k\)</span>th expert at the point <span class="math">
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>experts</strong> (<em>Sequence[GPModel]</em>) &#8211; the experts to calculate
+<li><strong>experts</strong> (<em>Sequence</em><em>[</em><a class="reference internal" href="public_api.html#gptf.GPModel" title="gptf.GPModel"><em>GPModel</em></a><em>]</em><em></em>) &#8211; the experts to calculate
 the weights of.</li>
 <li><strong>X</strong> (<em>tf.Tensor</em>) &#8211; the training inputs, shape <code class="code docutils literal"><span class="pre">[n,</span> <span class="pre">point_dims]</span></code>.</li>
 <li><strong>Y</strong> (<em>tf.Tensor</em>) &#8211; the training outputs, shape <code class="code docutils literal"><span class="pre">[n,</span> <span class="pre">num_latent]</span></code>.</li>
@@ -424,13 +427,13 @@ server job.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>experts</strong> (<em>GPModel | Sequence[GPModel]</em>) &#8211; The experts to
+<li><strong>experts</strong> (<em>GPModel | Sequence</em><em>[</em><a class="reference internal" href="public_api.html#gptf.GPModel" title="gptf.GPModel"><em>GPModel</em></a><em>]</em><em></em>) &#8211; The experts to
 combine the opinions of. If this is a <code class="code docutils literal"><span class="pre">GPModel</span></code>, then it
 will be shallow-copied to fill out the architecture.
 If it is a sequence of <code class="code docutils literal"><span class="pre">GPModel</span></code>s, then the architecture
 will have as many nodes in its final layer as
 there are in the sequence.</li>
-<li><strong>weightfunction</strong> (<em>Callable[[Sequence[GPModel], tf.Tensor, tf.Tensor, tf.Tensor], Tuple[tf.Tensor]]</em>) &#8211; A function used to calculate the weight of the experts.</li>
+<li><strong>weightfunction</strong> (<em>Callable</em><em>[</em><em></em><em>[</em><em>Sequence</em><em>[</em><a class="reference internal" href="public_api.html#gptf.GPModel" title="gptf.GPModel"><em>GPModel</em></a><em>]</em><em></em><em>, </em><em>tf.Tensor</em><em>, </em><em>tf.Tensor</em><em>, </em><em>tf.Tensor</em><em>]</em><em></em><em>, </em><em>Tuple</em><em>[</em><em>tf.Tensor</em><em>]</em><em></em><em>]</em><em></em>) &#8211; A function used to calculate the weight of the experts.</li>
 <li><strong>clusterspec</strong> (<em>tf.train.ClusterSpec</em>) &#8211; The cluster to
 distribute tasks over.</li>
 <li><strong>worker_job</strong> (<em>str</em>) &#8211; The job to assign computationally
@@ -464,7 +467,7 @@ every point and <span class="math">\(M\)</span> is the number of experts.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>experts</strong> (<em>Sequence[GPModel]</em>) &#8211; the experts to calculate
+<li><strong>experts</strong> (<em>Sequence</em><em>[</em><a class="reference internal" href="public_api.html#gptf.GPModel" title="gptf.GPModel"><em>GPModel</em></a><em>]</em><em></em>) &#8211; the experts to calculate
 the weights of.</li>
 <li><strong>X</strong> (<em>tf.Tensor</em>) &#8211; the training inputs, shape <code class="code docutils literal"><span class="pre">[n,</span> <span class="pre">point_dims]</span></code>.</li>
 <li><strong>Y</strong> (<em>tf.Tensor</em>) &#8211; the training outputs, shape <code class="code docutils literal"><span class="pre">[n,</span> <span class="pre">num_latent]</span></code>.</li>
@@ -562,7 +565,7 @@ Both tensors have the same dtype.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>experts</strong> (<em>Sequence[GPModel]</em>) &#8211; the experts to calculate
+<li><strong>experts</strong> (<em>Sequence</em><em>[</em><a class="reference internal" href="public_api.html#gptf.GPModel" title="gptf.GPModel"><em>GPModel</em></a><em>]</em><em></em>) &#8211; the experts to calculate
 the weights of.</li>
 <li><strong>X</strong> (<em>tf.Tensor</em>) &#8211; the training inputs, shape <code class="code docutils literal"><span class="pre">[n,</span> <span class="pre">point_dims]</span></code>.</li>
 <li><strong>Y</strong> (<em>tf.Tensor</em>) &#8211; the training outputs, shape <code class="code docutils literal"><span class="pre">[n,</span> <span class="pre">num_latent]</span></code>.</li>
@@ -660,7 +663,7 @@ Both tensors have the same dtype.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>experts</strong> (<em>GPModel | Sequence[GPModel]</em>) &#8211; <p>The experts to
+<li><strong>experts</strong> (<em>GPModel | Sequence</em><em>[</em><a class="reference internal" href="public_api.html#gptf.GPModel" title="gptf.GPModel"><em>GPModel</em></a><em>]</em><em></em>) &#8211; <p>The experts to
 combine the opinions of. If this is a <code class="code docutils literal"><span class="pre">GPModel</span></code>, then it
 will be shallow-copied to fill out the architecture.
 If it is a sequence of <code class="code docutils literal"><span class="pre">GPModel</span></code>s, then the architecture
@@ -669,8 +672,8 @@ there are in the sequence, i.e.</p>
 <blockquote>
 <div>len(experts) == reduce(operator.mul,architecture,1)</div></blockquote>
 </li>
-<li><strong>weightfunction</strong> (<em>Callable[[Sequence[GPModel], tf.Tensor, tf.Tensor, tf.Tensor], Tuple[tf.Tensor]]</em>) &#8211; A function used to calculate the weight of the experts.</li>
-<li><strong>architecture</strong> (<em>Sequence[int]</em>) &#8211; The branching factors at each
+<li><strong>weightfunction</strong> (<em>Callable</em><em>[</em><em></em><em>[</em><em>Sequence</em><em>[</em><a class="reference internal" href="public_api.html#gptf.GPModel" title="gptf.GPModel"><em>GPModel</em></a><em>]</em><em></em><em>, </em><em>tf.Tensor</em><em>, </em><em>tf.Tensor</em><em>, </em><em>tf.Tensor</em><em>]</em><em></em><em>, </em><em>Tuple</em><em>[</em><em>tf.Tensor</em><em>]</em><em></em><em>]</em><em></em>) &#8211; A function used to calculate the weight of the experts.</li>
+<li><strong>architecture</strong> (<em>Sequence</em><em>[</em><em>int</em><em>]</em><em></em>) &#8211; The branching factors at each
 layer of the rBCM.</li>
 </ul>
 </td>
@@ -685,7 +688,7 @@ layer of the rBCM.</li>
 <p>GP regression with Gaussian noise.</p>
 <dl class="class">
 <dt id="gptf.gpr.GPR">
-<em class="property">class </em><code class="descclassname">gptf.gpr.</code><code class="descname">GPR</code><span class="sig-paren">(</span><em>kernel</em>, <em>meanfunction=&lt;gptf.core.meanfunctions.Zero object</em>, <em>fallback_name unnamed</em>, <em>id 0x7f6582177510&gt;</em>, <em>noise_variance=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/gpr.html#GPR"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gptf.gpr.GPR" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">gptf.gpr.</code><code class="descname">GPR</code><span class="sig-paren">(</span><em>kernel</em>, <em>meanfunction=&lt;gptf.core.meanfunctions.Zero object</em>, <em>fallback_name unnamed</em>, <em>id 0x7f29762cd110&gt;</em>, <em>noise_variance=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/gpr.html#GPR"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gptf.gpr.GPR" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="gptf.core.html#gptf.core.models.GPModel" title="gptf.core.models.GPModel"><code class="xref py py-class docutils literal"><span class="pre">gptf.core.models.GPModel</span></code></a>, <a class="reference internal" href="gptf.core.html#gptf.core.params.ParamAttributes" title="gptf.core.params.ParamAttributes"><code class="xref py py-class docutils literal"><span class="pre">gptf.core.params.ParamAttributes</span></code></a></p>
 <p>Gaussian process regression with Gaussian noise.</p>
 <dl class="attribute">
@@ -727,7 +730,7 @@ of the GP.</p>
 <p>To generate some sample training outputs, we&#8217;ll compute a
 sample from the prior with one latent function at our
 training inputs.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">5.</span><span class="p">,</span> <span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span> <span class="c1"># 500 unique 1d points</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">5.</span><span class="p">,</span> <span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span> <span class="c1"># 500 unique 1d points</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">Y</span> <span class="o">=</span> <span class="n">gp</span><span class="o">.</span><span class="n">compute_prior_samples</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 </pre></div>
 </div>
@@ -748,8 +751,10 @@ to their original state.</p>
 <span class="go">      x: array([...,...,...])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">vaguely_close_to</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="n">v</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">value</span>
-<span class="gp">... </span>    <span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="n">v</span> <span class="o">-</span> <span class="n">v</span><span class="o">*.</span><span class="mi">25</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">b</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">vaguely_close_to</span><span class="p">(</span><span class="n">gp</span><span class="o">.</span><span class="n">kernel</span><span class="o">.</span><span class="n">lengthscales</span><span class="p">,</span> <span class="mf">1.</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="n">v</span> <span class="o">-</span> <span class="n">b</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">v</span><span class="o">*.</span><span class="mi">25</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">vaguely_close_to</span><span class="p">(</span><span class="n">gp</span><span class="o">.</span><span class="n">kernel</span><span class="o">.</span><span class="n">lengthscales</span><span class="p">,</span> <span class="mf">1.</span><span class="p">)</span>
 <span class="go">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">vaguely_close_to</span><span class="p">(</span><span class="n">gp</span><span class="o">.</span><span class="n">kernel</span><span class="o">.</span><span class="n">variance</span><span class="p">,</span> <span class="mf">10.</span><span class="p">)</span>
 <span class="go">True</span>
@@ -894,15 +899,15 @@ Both tensors have the same dtype.</p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="_sources/gptf.txt"
+      <li><a href="_sources/gptf.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
@@ -916,11 +921,11 @@ Both tensors have the same dtype.</p>
       &copy;2016, Blaine Rogers.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
       
       |
-      <a href="_sources/gptf.txt"
+      <a href="_sources/gptf.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 
