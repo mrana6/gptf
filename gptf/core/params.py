@@ -1335,7 +1335,7 @@ class ParamList(Parameterized, ListTree):
 
 PlaceholderSpec = namedtuple('PlaceholderSpec', 'dtype shape')
 
-def autoflow(*wrapped_args):
+def autoflow(*wrapped_args, **arg_specs):
     """Wraps up a TensorFlow method so that it takes NumPy and gives NumPy.
 
     NB: Caching will not work properly unless all of the arguments to the
@@ -1368,6 +1368,26 @@ def autoflow(*wrapped_args):
                     ...
 
            Both of the above calls are precisely the same.
+        **arg_specs (Dict[str, Tuple]): Keyword arguments can be used to
+            constrain the type and shape of the wrapped arguemnts. For
+            instance,
+
+            .. code:: python
+
+                @autoflow('arg1', arg2=(tf.float64, (None, None)))
+                def method(self, arg1, arg2):
+                    ...
+
+            ensures that the placeholder constructed for arg2 will be
+            of rank 2, with dtype ``tf.float64``. 
+
+            .. code:: python
+
+                @autoflow('arg1', arg2=('infer', ('infer', Ellipsis)))
+                def method(self, arg1, arg2):
+                    ...
+
+            ensures only that arg2 will have rank :math:`\geq` 1.
 
     Returns:
         (Callable): A decorator that converts a TensorFlow method to a 
@@ -1389,6 +1409,11 @@ def autoflow(*wrapped_args):
         ...             return tf.subtract(a, b)
         ...         else:
         ...             raise ValueError("kind must be 'add' or 'subtract'")
+        ...
+        ...     @autoflow(a=(tf.float64, (None, 'infer')),
+        ...               b=('infer', (None, Ellipsis)))
+        ...     def tf_batch_add(self, a, b):
+        ...         return tf.add(a, b)
 
         Now we can leverage the mighty power of TensorFlow without ever
         having to get our hands dirty:
@@ -1408,6 +1433,32 @@ def autoflow(*wrapped_args):
         14
         >>> m.tf_op(5, 9, 'subtract')
         -4
+
+        We ensure using keyword arguments to ``autoflow`` that we can only
+        call ``.tf_batch_add`` with a rank 2 tensor for ``a``. The rank of 
+        ``b`` must be at least 1. We have also constrained the type that 
+        ``a`` can take.
+
+        >>> m.tf_batch_add([[1., 2.]], [1., 2.])
+        array([[ 2., 4.]])
+        >>> m.tf_batch_add([[1.], [2.]], [[1., 3.], [2., 3.]])
+        array([[ 2., 4.],
+               [ 4., 5.]])
+        >>> m.tf_batch_add([[1.+2j], [4+5j]], [0.])
+        Traceback (most recent call last):
+            ...
+        TypeError: can't convert complex to float
+        >>> m.tf_batch_add(1., [0.])
+        Traceback (most recent call last):
+            ...
+        ValueError: cannot unify shapes (None, 'infer') and ()
+
+        ``autoflow`` will also look at the ``autoflow_specs`` argument when 
+        inferring the specifications for placeholders. This overrides any
+        other placeholder specifications:
+
+        >>> m.tf_batch_add(1, [0], autoflow_specs={'a': (tf.int64, ())})
+        array([1])
 
         Autoflowed methods still work if the device context changes:
 
@@ -1435,6 +1486,7 @@ def autoflow(*wrapped_args):
     if len(wrapped_args) == 1 and ' ' in wrapped_args[0]:
         wrapped_args = wrapped_args[0].split(' ')
     wrapped_args = set(wrapped_args)
+    wrapped_args |= set(arg_specs.keys())
 
     def decorator(method):
         """A decorater than converts a TensorFlow method to NumPy.
@@ -1467,7 +1519,12 @@ def autoflow(*wrapped_args):
                 if name in wrapped_args and binding.arguments[name] is not None:
                     np_arg = np.asarray(binding.arguments[name])
                     specs[name] = PlaceholderSpec(np_arg.dtype, np_arg.shape)
-            specs.update(kwarg_specs)
+
+            unbound_specs = arg_specs.copy()
+            unbound_specs.update(kwarg_specs)
+            specs.update(_bind_specs(
+                wrapped_args, binding.arguments, unbound_specs
+            ))
 
             # Set up placeholder cache
             ph_cache = '_autoflow__{}'.format(method.__name__)
@@ -1491,7 +1548,8 @@ def autoflow(*wrapped_args):
 
             if not found:
                 specs = tuple(sorted(specs.items()))
-                placeholders = {n: tf.placeholder(*spec) for n, spec in specs}
+                placeholders = {n: tf.placeholder(*spec, name=n) 
+                                for n, spec in specs}
                 instance.cache[ph_cache][specs] = placeholders
             else:
                 placeholders = instance.cache[ph_cache][specs]
@@ -1510,6 +1568,45 @@ def autoflow(*wrapped_args):
         return wrapper
     return decorator
 
+def _bind_specs(wrapped_args, args, unbound_specs):
+    specs = {}
+    for name in unbound_specs:
+        if name in wrapped_args and args[name] is not None:
+            dtype, dims_ = unbound_specs[name]
+            dims = list(dims_)
+            assert dims.count(Ellipsis) <= 1,\
+                    ('Ellipsis may only sppear once in shape '
+                     'specification for argument {}: {}'
+                     .format(name, dims_))
+            np_arg = np.asarray(args[name])
+            try:
+                assert (len(dims) == len(np_arg.shape) or
+                        (Ellipsis in dims and 
+                         len(dims) <= len(np_arg.shape) + 1))
+                i = 0
+                while i < len(dims):
+                    if dims[i] == 'infer':
+                        dims[i] = np_arg.shape[i]
+                    elif dims[i] == Ellipsis:
+                        missing = len(np_arg.shape) - len(dims)
+                        if missing == -1:
+                            del dims[i]
+                        else:
+                            dims[i] = np_arg.shape[i]
+                            for j in range(i + 1, i + missing + 1):
+                                dims.insert(j, np_arg.shape[j])
+                        i = i + missing
+                    i += 1
+            except (IndexError, AssertionError):
+                raise ValueError('cannot unify shapes {} and {}'
+                                 .format(dims_, np_arg.shape))
+            if dtype == 'infer':
+                dtype = np_arg.dtype
+            elif isinstance(dtype, tf.DType):
+                dtype = dtype.as_numpy_dtype
+            specs[name] = PlaceholderSpec(dtype, tuple(dims))
+    return specs
+
 def _matches(args_dict, specs):
     for name, spec in specs:
         if name not in args_dict or not _matches_spec(args_dict[name], spec):
@@ -1524,8 +1621,9 @@ def _matches_spec(ph, spec):
 
 def _compatible(spec0, spec1):
     return (np.can_cast(spec0.dtype, spec1.dtype) and 
-            _broadcastable(spec0.shape, spec1.shape))
+            _shapes_compatible(spec0.shape, spec1.shape))
 
-def _broadcastable(shape0, shape1):
-    return all(a in {1, None} or b in {1, None} or a == b 
-               for a, b in zip(shape0[::-1], shape1[::-1]))
+def _shapes_compatible(shape0, shape1):
+    return (len(shape0) == len(shape1) and 
+            all(a is None or b is None or a == b 
+                for a, b in zip(shape0[::-1], shape1[::-1])))
