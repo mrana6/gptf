@@ -1467,6 +1467,8 @@ def autoflow(*wrapped_args):
                 if name in wrapped_args and binding.arguments[name] is not None:
                     np_arg = np.asarray(binding.arguments[name])
                     specs[name] = PlaceholderSpec(np_arg.dtype, np_arg.shape)
+            for k in kwarg_specs:
+                kwarg_specs[k] = PlaceholderSpec(*kwarg_specs[k])
             specs.update(kwarg_specs)
 
             # Set up placeholder cache
@@ -1491,7 +1493,8 @@ def autoflow(*wrapped_args):
 
             if not found:
                 specs = tuple(sorted(specs.items()))
-                placeholders = {n: tf.placeholder(*spec) for n, spec in specs}
+                placeholders = {n: tf.placeholder(*spec, name=n) 
+                                for n, spec in specs}
                 instance.cache[ph_cache][specs] = placeholders
             else:
                 placeholders = instance.cache[ph_cache][specs]
