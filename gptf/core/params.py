@@ -1451,7 +1451,7 @@ def autoflow(*wrapped_args):
 
         """
         sig = signature(method)
-        assert all(param in wrapped_args for param in sig.parameters),\
+        assert all(arg in sig.parameters for arg in wrapped_args),\
                 'args specified in autoflow must appear in parameters of '\
                 'wrapped function.'
 
@@ -1525,7 +1525,7 @@ def _matches_spec(ph, spec):
 
 def _compatible(spec0, spec1):
     return (np.can_cast(spec0.dtype, spec1.dtype) and 
-            _broadcastable(spec0.shape, spec1.shape)
+            _broadcastable(spec0.shape, spec1.shape))
 
 def _broadcastable(shape0, shape1):
     return all(a in {1, None} or b in {1, None} or a == b 
