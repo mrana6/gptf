@@ -2512,59 +2512,733 @@ of a <code class="code docutils literal"><span class="pre">Param</span></code>, 
 <div class="section" id="kernels">
 <h3>kernels<a class="headerlink" href="#kernels" title="Permalink to this headline">¶</a></h3>
 <p>All classes in this module inherit from <a class="reference internal" href="#gptf.Parameterized" title="gptf.Parameterized"><code class="xref py py-class docutils literal"><span class="pre">gptf.Parameterized</span></code></a>.</p>
-<dl class="function">
+<p>Provides kernels.</p>
+<dl class="class">
 <dt>
-<code class="descclassname">gptf.core.densities.</code><code class="descname">bernoulli</code><span class="sig-paren">(</span><em>p</em>, <em>y</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/densities.html#bernoulli"><span class="viewcode-link">[source]</span></a></dt>
-<dd></dd></dl>
-
-<dl class="function">
+<em class="property">class </em><code class="descclassname">gptf.core.kernels.</code><code class="descname">Absolute</code><span class="sig-paren">(</span><em>kernel</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/kernels.html#Absolute"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>The absolute value of a kernel.</p>
+<dl class="method">
 <dt>
-<code class="descclassname">gptf.core.densities.</code><code class="descname">beta</code><span class="sig-paren">(</span><em>alpha</em>, <em>beta</em>, <em>y</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/densities.html#beta"><span class="viewcode-link">[source]</span></a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt>
-<code class="descclassname">gptf.core.densities.</code><code class="descname">exponential</code><span class="sig-paren">(</span><em>lamb</em>, <em>y</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/densities.html#exponential"><span class="viewcode-link">[source]</span></a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt>
-<code class="descclassname">gptf.core.densities.</code><code class="descname">gamma</code><span class="sig-paren">(</span><em>shape</em>, <em>scale</em>, <em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/densities.html#gamma"><span class="viewcode-link">[source]</span></a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt>
-<code class="descclassname">gptf.core.densities.</code><code class="descname">gaussian</code><span class="sig-paren">(</span><em>x</em>, <em>mu</em>, <em>var</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/densities.html#gaussian"><span class="viewcode-link">[source]</span></a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt>
-<code class="descclassname">gptf.core.densities.</code><code class="descname">laplace</code><span class="sig-paren">(</span><em>mu</em>, <em>sigma</em>, <em>y</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/densities.html#laplace"><span class="viewcode-link">[source]</span></a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt>
-<code class="descclassname">gptf.core.densities.</code><code class="descname">lognormal</code><span class="sig-paren">(</span><em>x</em>, <em>mu</em>, <em>var</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/densities.html#lognormal"><span class="viewcode-link">[source]</span></a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt>
-<code class="descclassname">gptf.core.densities.</code><code class="descname">multivariate_normal</code><span class="sig-paren">(</span><em>x</em>, <em>mu</em>, <em>L</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/densities.html#multivariate_normal"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>L is the Cholesky decomposition of the covariance.</p>
-<p>x and mu are either vectors (ndim=1) or matrices. In the matrix case, we
-assume independence over the <em>columns</em>: the number of rows must match the
-size of L.</p>
+<code class="descname">K</code><span class="sig-paren">(</span><em>instance</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/kernels.html#Absolute.K"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Builds a tensor that computes the covariance function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>X</strong> (<em>tf.Tensor</em>) &#8211; A tensor of shape <span class="math">\(N \times D\)</span>.</li>
+<li><strong>X2</strong> (<em>tf.Tensor | None</em>) &#8211; A tensor of shape <span class="math">\(M \times D\)</span>.
+If <code class="code docutils literal"><span class="pre">None</span></code>, the second argument will be assumed symmetrical.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The covariance function K(X, X2). Shape
+<span class="math">\(N \times M\)</span></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">(tf.Tensor)</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
-<dl class="function">
+<dl class="method">
 <dt>
-<code class="descclassname">gptf.core.densities.</code><code class="descname">poisson</code><span class="sig-paren">(</span><em>lamb</em>, <em>y</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/densities.html#poisson"><span class="viewcode-link">[source]</span></a></dt>
+<code class="descname">Kdiag</code><span class="sig-paren">(</span><em>instance</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/kernels.html#Absolute.Kdiag"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Builds a tensor that computes the diagonal of <code class="code docutils literal"><span class="pre">self.K(X)</span></code></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>X</strong> (<em>tf.Tensor</em>) &#8211; A tensor of shape <span class="math">\(N \times D\)</span>.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The diagonal of <code class="code docutils literal"><span class="pre">self.K(X)</span></code>. Shape <code class="code docutils literal"><span class="pre">N</span></code>.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">(tf.Tensor)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt>
+<em class="property">class </em><code class="descclassname">gptf.core.kernels.</code><code class="descname">Additive</code><span class="sig-paren">(</span><em>*kernels</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/kernels.html#Additive"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>The addition of mean functions.</p>
+<dl class="method">
+<dt>
+<code class="descname">K</code><span class="sig-paren">(</span><em>instance</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/kernels.html#Additive.K"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Builds a tensor that computes the covariance function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>X</strong> (<em>tf.Tensor</em>) &#8211; A tensor of shape <span class="math">\(N \times D\)</span>.</li>
+<li><strong>X2</strong> (<em>tf.Tensor | None</em>) &#8211; A tensor of shape <span class="math">\(M \times D\)</span>.
+If <code class="code docutils literal"><span class="pre">None</span></code>, the second argument will be assumed symmetrical.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The covariance function K(X, X2). Shape
+<span class="math">\(N \times M\)</span></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">(tf.Tensor)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">Kdiag</code><span class="sig-paren">(</span><em>instance</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/kernels.html#Additive.Kdiag"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Builds a tensor that computes the diagonal of <code class="code docutils literal"><span class="pre">self.K(X)</span></code></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>X</strong> (<em>tf.Tensor</em>) &#8211; A tensor of shape <span class="math">\(N \times D\)</span>.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The diagonal of <code class="code docutils literal"><span class="pre">self.K(X)</span></code>. Shape <code class="code docutils literal"><span class="pre">N</span></code>.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">(tf.Tensor)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descclassname">gptf.core.kernels.</code><code class="descname">Bias</code></dt>
+<dd><p>alias of <a class="reference internal" href="gptf.core.html#gptf.core.kernels.Constant" title="gptf.core.kernels.Constant"><code class="xref py py-class docutils literal"><span class="pre">Constant</span></code></a></p>
+</dd></dl>
+
+<dl class="class">
+<dt>
+<em class="property">class </em><code class="descclassname">gptf.core.kernels.</code><code class="descname">Constant</code><span class="sig-paren">(</span><em>variance=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/kernels.html#Constant"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>The Constant (a.k.a. Bias) kernel.</p>
+<dl class="method">
+<dt>
+<code class="descname">K</code><span class="sig-paren">(</span><em>X</em>, <em>X2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/kernels.html#Constant.K"><span class="viewcode-link">[source]</span></a></dt>
 <dd></dd></dl>
 
-<dl class="function">
+</dd></dl>
+
+<dl class="class">
 <dt>
-<code class="descclassname">gptf.core.densities.</code><code class="descname">student_t</code><span class="sig-paren">(</span><em>x</em>, <em>mean</em>, <em>scale</em>, <em>deg_free</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/densities.html#student_t"><span class="viewcode-link">[source]</span></a></dt>
+<em class="property">class </em><code class="descclassname">gptf.core.kernels.</code><code class="descname">Cosine</code><span class="sig-paren">(</span><em>variance=1.0</em>, <em>lengthscales=1.0</em>, <em>ARD=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/kernels.html#Cosine"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>The Cosine kernel.</p>
+</dd></dl>
+
+<dl class="class">
+<dt>
+<em class="property">class </em><code class="descclassname">gptf.core.kernels.</code><code class="descname">Divisive</code><span class="sig-paren">(</span><em>numerator</em>, <em>denominator</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/kernels.html#Divisive"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>The division of kernels.</p>
+<p><code class="code docutils literal"><span class="pre">Divisive(a,</span> <span class="pre">b)(X)</span></code> returns <code class="code docutils literal"><span class="pre">a(X)</span> <span class="pre">/</span> <span class="pre">b(X)</span></code>.</p>
+<dl class="method">
+<dt>
+<code class="descname">K</code><span class="sig-paren">(</span><em>instance</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/kernels.html#Divisive.K"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Builds a tensor that computes the covariance function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>X</strong> (<em>tf.Tensor</em>) &#8211; A tensor of shape <span class="math">\(N \times D\)</span>.</li>
+<li><strong>X2</strong> (<em>tf.Tensor | None</em>) &#8211; A tensor of shape <span class="math">\(M \times D\)</span>.
+If <code class="code docutils literal"><span class="pre">None</span></code>, the second argument will be assumed symmetrical.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The covariance function K(X, X2). Shape
+<span class="math">\(N \times M\)</span></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">(tf.Tensor)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">Kdiag</code><span class="sig-paren">(</span><em>instance</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/kernels.html#Divisive.Kdiag"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Builds a tensor that computes the diagonal of <code class="code docutils literal"><span class="pre">self.K(X)</span></code></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>X</strong> (<em>tf.Tensor</em>) &#8211; A tensor of shape <span class="math">\(N \times D\)</span>.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The diagonal of <code class="code docutils literal"><span class="pre">self.K(X)</span></code>. Shape <code class="code docutils literal"><span class="pre">N</span></code>.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">(tf.Tensor)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt>
+<em class="property">class </em><code class="descclassname">gptf.core.kernels.</code><code class="descname">Exponential</code><span class="sig-paren">(</span><em>variance=1.0</em>, <em>lengthscales=1.0</em>, <em>ARD=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/kernels.html#Exponential"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>The Exponential kernel.</p>
+</dd></dl>
+
+<dl class="class">
+<dt>
+<em class="property">class </em><code class="descclassname">gptf.core.kernels.</code><code class="descname">Kernel</code><a class="reference internal" href="_modules/gptf/core/kernels.html#Kernel"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Base class for kernels.</p>
+<p>Inheriting classes must define <code class="code docutils literal"><span class="pre">.K()</span></code>, <code class="code docutils literal"><span class="pre">.Kdiag()</span></code>.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Ones</span><span class="p">(</span><span class="n">Kernel</span><span class="p">,</span> <span class="n">ParamAttributes</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="nd">@tf_method</span><span class="p">()</span>
+<span class="gp">... </span>    <span class="nd">@overrides</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">K</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">X2</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="k">if</span> <span class="n">X2</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+<span class="gp">... </span>            <span class="n">X2</span> <span class="o">=</span> <span class="n">X</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">tf</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">X</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="n">tf</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">X2</span><span class="p">)[</span><span class="mi">0</span><span class="p">]),</span>
+<span class="gp">... </span>                       <span class="n">dtype</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="nd">@tf_method</span><span class="p">()</span>
+<span class="gp">... </span>    <span class="nd">@overrides</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">Kdiag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">tf</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">X</span><span class="p">)[</span><span class="mi">0</span><span class="p">],),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sess</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">InteractiveSession</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">constant</span><span class="p">([[</span><span class="mf">1.</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X2</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">constant</span><span class="p">([[</span><span class="mf">1.</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Ones</span><span class="p">()</span><span class="o">.</span><span class="n">K</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">X2</span><span class="p">)</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+<span class="go">array([[ 1., 1.]])</span>
+</pre></div>
+</div>
+<p>You can do maths with kernels! Addition and subtraction:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">threes</span> <span class="o">=</span> <span class="n">Ones</span><span class="p">()</span> <span class="o">+</span> <span class="n">Ones</span><span class="p">()</span> <span class="o">+</span> <span class="n">Ones</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">threes</span><span class="o">.</span><span class="n">K</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">X2</span><span class="p">)</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+<span class="go">array([[ 3., 3.]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">threes</span> <span class="o">-</span> <span class="n">Ones</span><span class="p">())</span><span class="o">.</span><span class="n">K</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">X2</span><span class="p">)</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+<span class="go">array([[ 2., 2.]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="o">-</span><span class="n">threes</span><span class="p">)</span><span class="o">.</span><span class="n">K</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">X2</span><span class="p">)</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+<span class="go">array([[-3., -3.]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">abs</span><span class="p">(</span><span class="o">-</span><span class="n">threes</span><span class="p">)</span><span class="o">.</span><span class="n">K</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">X2</span><span class="p">)</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+<span class="go">array([[ 3.,  3.]])</span>
+</pre></div>
+</div>
+<p>Multiplication and division:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">threes</span> <span class="o">*</span> <span class="n">threes</span><span class="p">)</span><span class="o">.</span><span class="n">K</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">X2</span><span class="p">)</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+<span class="go">array([[ 9., 9.]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">Ones</span><span class="p">()</span> <span class="o">/</span> <span class="n">threes</span><span class="p">)</span><span class="o">.</span><span class="n">K</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">X2</span><span class="p">)</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="go">array([[ 0.333, 0.333]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">threes</span><span class="p">)</span><span class="o">.</span><span class="n">K</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">X2</span><span class="p">)</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>  <span class="c1"># 1 / Kernel works</span>
+<span class="go">array([[ 0.333, 0.333]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">threes</span> <span class="o">*</span> <span class="n">threes</span> <span class="o">/</span> <span class="n">threes</span> <span class="o">*</span> <span class="n">threes</span><span class="p">)</span><span class="o">.</span><span class="n">K</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">X2</span><span class="p">)</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+<span class="go">array([[ 9., 9.]])</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sess</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt>
+<code class="descname">K</code><span class="sig-paren">(</span><em>X</em>, <em>X2=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/kernels.html#Kernel.K"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Builds a tensor that computes the covariance function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>X</strong> (<em>tf.Tensor</em>) &#8211; A tensor of shape <span class="math">\(N \times D\)</span>.</li>
+<li><strong>X2</strong> (<em>tf.Tensor | None</em>) &#8211; A tensor of shape <span class="math">\(M \times D\)</span>.
+If <code class="code docutils literal"><span class="pre">None</span></code>, the second argument will be assumed symmetrical.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The covariance function K(X, X2). Shape
+<span class="math">\(N \times M\)</span></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">(tf.Tensor)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">Kdiag</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/kernels.html#Kernel.Kdiag"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Builds a tensor that computes the diagonal of <code class="code docutils literal"><span class="pre">self.K(X)</span></code></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>X</strong> (<em>tf.Tensor</em>) &#8211; A tensor of shape <span class="math">\(N \times D\)</span>.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The diagonal of <code class="code docutils literal"><span class="pre">self.K(X)</span></code>. Shape <code class="code docutils literal"><span class="pre">N</span></code>.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">(tf.Tensor)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">compute_K</code><span class="sig-paren">(</span><em>instance</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/kernels.html#Kernel.compute_K"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>An autoflowed version of K(X, Z)</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">compute_K_symm</code><span class="sig-paren">(</span><em>instance</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/kernels.html#Kernel.compute_K_symm"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Deprecated since version 1.1.0</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">compute_Kdiag</code><span class="sig-paren">(</span><em>instance</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/kernels.html#Kernel.compute_Kdiag"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>An autoflowed version of Kdiag(X)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt>
+<em class="property">class </em><code class="descclassname">gptf.core.kernels.</code><code class="descname">Matern12</code><span class="sig-paren">(</span><em>variance=1.0</em>, <em>lengthscales=1.0</em>, <em>ARD=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/kernels.html#Matern12"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>The Matern 1/2 kernel</p>
+</dd></dl>
+
+<dl class="class">
+<dt>
+<em class="property">class </em><code class="descclassname">gptf.core.kernels.</code><code class="descname">Matern32</code><span class="sig-paren">(</span><em>variance=1.0</em>, <em>lengthscales=1.0</em>, <em>ARD=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/kernels.html#Matern32"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>The Matern 3/2 kernel</p>
+</dd></dl>
+
+<dl class="class">
+<dt>
+<em class="property">class </em><code class="descclassname">gptf.core.kernels.</code><code class="descname">Matern52</code><span class="sig-paren">(</span><em>variance=1.0</em>, <em>lengthscales=1.0</em>, <em>ARD=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/kernels.html#Matern52"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>The Matern 5/2 kernel</p>
+</dd></dl>
+
+<dl class="class">
+<dt>
+<em class="property">class </em><code class="descclassname">gptf.core.kernels.</code><code class="descname">Multiplicative</code><span class="sig-paren">(</span><em>*kernels</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/kernels.html#Multiplicative"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>The multiplication of kernels.</p>
+<dl class="method">
+<dt>
+<code class="descname">K</code><span class="sig-paren">(</span><em>instance</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/kernels.html#Multiplicative.K"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Builds a tensor that computes the covariance function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>X</strong> (<em>tf.Tensor</em>) &#8211; A tensor of shape <span class="math">\(N \times D\)</span>.</li>
+<li><strong>X2</strong> (<em>tf.Tensor | None</em>) &#8211; A tensor of shape <span class="math">\(M \times D\)</span>.
+If <code class="code docutils literal"><span class="pre">None</span></code>, the second argument will be assumed symmetrical.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The covariance function K(X, X2). Shape
+<span class="math">\(N \times M\)</span></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">(tf.Tensor)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">Kdiag</code><span class="sig-paren">(</span><em>instance</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/kernels.html#Multiplicative.Kdiag"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Builds a tensor that computes the diagonal of <code class="code docutils literal"><span class="pre">self.K(X)</span></code></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>X</strong> (<em>tf.Tensor</em>) &#8211; A tensor of shape <span class="math">\(N \times D\)</span>.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The diagonal of <code class="code docutils literal"><span class="pre">self.K(X)</span></code>. Shape <code class="code docutils literal"><span class="pre">N</span></code>.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">(tf.Tensor)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt>
+<em class="property">class </em><code class="descclassname">gptf.core.kernels.</code><code class="descname">Negative</code><span class="sig-paren">(</span><em>kernel</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/kernels.html#Negative"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>The negative of a kernel.</p>
+<dl class="method">
+<dt>
+<code class="descname">K</code><span class="sig-paren">(</span><em>instance</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/kernels.html#Negative.K"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Builds a tensor that computes the covariance function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>X</strong> (<em>tf.Tensor</em>) &#8211; A tensor of shape <span class="math">\(N \times D\)</span>.</li>
+<li><strong>X2</strong> (<em>tf.Tensor | None</em>) &#8211; A tensor of shape <span class="math">\(M \times D\)</span>.
+If <code class="code docutils literal"><span class="pre">None</span></code>, the second argument will be assumed symmetrical.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The covariance function K(X, X2). Shape
+<span class="math">\(N \times M\)</span></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">(tf.Tensor)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">Kdiag</code><span class="sig-paren">(</span><em>instance</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/kernels.html#Negative.Kdiag"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Builds a tensor that computes the diagonal of <code class="code docutils literal"><span class="pre">self.K(X)</span></code></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>X</strong> (<em>tf.Tensor</em>) &#8211; A tensor of shape <span class="math">\(N \times D\)</span>.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The diagonal of <code class="code docutils literal"><span class="pre">self.K(X)</span></code>. Shape <code class="code docutils literal"><span class="pre">N</span></code>.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">(tf.Tensor)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt>
+<em class="property">class </em><code class="descclassname">gptf.core.kernels.</code><code class="descname">PartiallyActive</code><span class="sig-paren">(</span><em>wrapped</em>, <em>active_dims</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/kernels.html#PartiallyActive"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>A kernel that only uses some of the dimensions of the input.</p>
+<dl class="attribute">
+<dt id="gptf.core.kernels.PartiallyActive.wrapped">
+<code class="descname">wrapped</code><a class="headerlink" href="#gptf.core.kernels.PartiallyActive.wrapped" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Kernel</em> &#8211; The wrapped kernel.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gptf.core.kernels.PartiallyActive.active_dims">
+<code class="descname">active_dims</code><a class="headerlink" href="#gptf.core.kernels.PartiallyActive.active_dims" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>slice | Iterable[int]</em> &#8211; The active dimensions of
+the input. Each input to <code class="code docutils literal"><span class="pre">.K()</span> <span class="pre">or</span> <span class="pre">`.Kdiag()</span></code> will be sliced
+along its second axis so that only the active dimensions
+remain before being passed to <code class="code docutils literal"><span class="pre">.wrapped.K()</span></code> or
+<code class="code docutils literal"><span class="pre">.wrapped.Kdiag()</span></code>.</p>
+</dd></dl>
+
+<p class="rubric">Examples</p>
+<p>First, we define an example kernel that lets us inspect the
+arguments passed to <code class="code docutils literal"><span class="pre">.K()</span></code>.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Example</span><span class="p">(</span><span class="n">Kernel</span><span class="p">,</span> <span class="n">ParamAttributes</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="nd">@tf_method</span><span class="p">()</span>
+<span class="gp">... </span>    <span class="nd">@overrides</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">K</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">X2</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="n">X</span><span class="p">,</span> <span class="n">X2</span>
+<span class="gp">... </span>    <span class="nd">@tf_method</span><span class="p">()</span>
+<span class="gp">... </span>    <span class="nd">@overrides</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">Kdiag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">X2</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="bp">NotImplemented</span>
+</pre></div>
+</div>
+<p>Slices are applied to the second axis of the input.
+A slice of <code class="code docutils literal"><span class="pre">:3</span></code> turns <code class="code docutils literal"><span class="pre">X</span></code> into <code class="code docutils literal"><span class="pre">X[:,</span> <span class="pre">:3]</span></code>.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">k</span> <span class="o">=</span> <span class="n">PartiallyActive</span><span class="p">(</span><span class="n">Example</span><span class="p">(),</span> <span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>  <span class="c1"># :3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X_k</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">k</span><span class="o">.</span><span class="n">compute_K</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X_k</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(1, 3)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X_k</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="go">array([ 0., 1., 2.])</span>
+</pre></div>
+</div>
+<p>If active_dims is a sequence of <code class="code docutils literal"><span class="pre">int</span></code>, only dimensions in the
+sequence will be passed through.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">k</span><span class="o">.</span><span class="n">active_dims</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X_k</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">k</span><span class="o">.</span><span class="n">compute_K</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X_k</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(1, 3)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X_k</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="go">array([ 1., 3., 4.])</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt>
+<code class="descname">K</code><span class="sig-paren">(</span><em>instance</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/kernels.html#PartiallyActive.K"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Builds a tensor that computes the covariance function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>X</strong> (<em>tf.Tensor</em>) &#8211; A tensor of shape <span class="math">\(N \times D\)</span>.</li>
+<li><strong>X2</strong> (<em>tf.Tensor | None</em>) &#8211; A tensor of shape <span class="math">\(M \times D\)</span>.
+If <code class="code docutils literal"><span class="pre">None</span></code>, the second argument will be assumed symmetrical.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The covariance function K(X, X2). Shape
+<span class="math">\(N \times M\)</span></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">(tf.Tensor)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">Kdiag</code><span class="sig-paren">(</span><em>instance</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/kernels.html#PartiallyActive.Kdiag"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Builds a tensor that computes the diagonal of <code class="code docutils literal"><span class="pre">self.K(X)</span></code></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>X</strong> (<em>tf.Tensor</em>) &#8211; A tensor of shape <span class="math">\(N \times D\)</span>.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The diagonal of <code class="code docutils literal"><span class="pre">self.K(X)</span></code>. Shape <code class="code docutils literal"><span class="pre">N</span></code>.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">(tf.Tensor)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">active_dims</code></dt>
 <dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt>
+<em class="property">class </em><code class="descclassname">gptf.core.kernels.</code><code class="descname">RBF</code><span class="sig-paren">(</span><em>variance=1.0</em>, <em>lengthscales=1.0</em>, <em>ARD=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/kernels.html#RBF"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>The Radial Basis Function (RBF) or squared exponential kernel.</p>
+</dd></dl>
+
+<dl class="class">
+<dt>
+<em class="property">class </em><code class="descclassname">gptf.core.kernels.</code><code class="descname">Static</code><span class="sig-paren">(</span><em>variance=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/kernels.html#Static"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Base class for static kernels.</p>
+<p>Kernels that do not depend on the value of the inputs are static.
+The only parameter they require is a variance.</p>
+<dl class="attribute">
+<dt id="gptf.core.kernels.Static.variance">
+<code class="descname">variance</code><a class="headerlink" href="#gptf.core.kernels.Static.variance" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Param</em> &#8211; The variance of the kernel.</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">Kdiag</code><span class="sig-paren">(</span><em>instance</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/kernels.html#Static.Kdiag"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Builds a tensor that computes the diagonal of <code class="code docutils literal"><span class="pre">self.K(X)</span></code></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>X</strong> (<em>tf.Tensor</em>) &#8211; A tensor of shape <span class="math">\(N \times D\)</span>.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The diagonal of <code class="code docutils literal"><span class="pre">self.K(X)</span></code>. Shape <code class="code docutils literal"><span class="pre">N</span></code>.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">(tf.Tensor)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt>
+<em class="property">class </em><code class="descclassname">gptf.core.kernels.</code><code class="descname">Stationary</code><span class="sig-paren">(</span><em>variance=1.0</em>, <em>lengthscales=1.0</em>, <em>ARD=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/kernels.html#Stationary"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Base class for stationary kernels.</p>
+<p>Inheriting classes must define <code class="code docutils literal"><span class="pre">._trueK()</span></code> instead of <code class="code docutils literal"><span class="pre">.K()</span></code>.</p>
+<dl class="docutils">
+<dt>Stationary kernels depend only on</dt>
+<dd>r = || X - X2 ||</dd>
+</dl>
+<p>This class handles ARD (Automatic Relevance Determination)
+behaviour. If ARD, then the kernal has one length scale per input
+dimension. Otherwise, the kernel is isotropic (one length scale).</p>
+<dl class="attribute">
+<dt id="gptf.core.kernels.Stationary.variance">
+<code class="descname">variance</code><a class="headerlink" href="#gptf.core.kernels.Stationary.variance" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Param</em> &#8211; The variance of the kernel.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gptf.core.kernels.Stationary.lengthscales">
+<code class="descname">lengthscales</code><a class="headerlink" href="#gptf.core.kernels.Stationary.lengthscales" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Param | None</em> &#8211; The length scale parameters of
+the kernel. Points are divided by the length scale(s)
+before distances are found between them.
+Note that if ARD is used, this will be <code class="code docutils literal"><span class="pre">None</span></code> until the
+first call to <code class="code docutils literal"><span class="pre">.K()</span></code>.</p>
+</dd></dl>
+
+<p class="rubric">Examples</p>
+<p>You can use ARD to automatically create one length scale for
+each dimension of the input.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">gptf</span> <span class="k">import</span> <span class="n">tfhacks</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Example</span><span class="p">(</span><span class="n">Stationary</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="nd">@tf_method</span><span class="p">()</span>
+<span class="gp">... </span>    <span class="nd">@overrides</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">_trueK</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">X2</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="n">n</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">X</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="n">tfhacks</span><span class="o">.</span><span class="n">eye</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">e</span> <span class="o">=</span> <span class="n">Example</span><span class="p">(</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>  <span class="c1"># use ARD</span>
+</pre></div>
+</div>
+<p>At first, no length scale parameter is created.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">e</span><span class="o">.</span><span class="n">lengthscales</span> <span class="ow">is</span> <span class="kc">None</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>When <code class="code docutils literal"><span class="pre">.K()</span></code> is called, the shape of <code class="code docutils literal"><span class="pre">X</span></code> is used to create the
+value of <code class="code docutils literal"><span class="pre">.lengthscales</span></code>.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">,</span> <span class="mf">4.</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">e</span><span class="o">.</span><span class="n">get_session</span><span class="p">()</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">K</span><span class="p">(</span><span class="n">X</span><span class="p">))</span>
+<span class="go">array([[ 1.]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">lengthscales</span><span class="p">,</span> <span class="n">Param</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">e</span><span class="o">.</span><span class="n">lengthscales</span><span class="o">.</span><span class="n">value</span>
+<span class="go">array([ 1., 1., 1.])</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt>
+<code class="descname">K</code><span class="sig-paren">(</span><em>instance</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/kernels.html#Stationary.K"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Builds a tensor that computes the covariance function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>X</strong> (<em>tf.Tensor</em>) &#8211; A tensor of shape <span class="math">\(N \times D\)</span>.</li>
+<li><strong>X2</strong> (<em>tf.Tensor | None</em>) &#8211; A tensor of shape <span class="math">\(M \times D\)</span>.
+If <code class="code docutils literal"><span class="pre">None</span></code>, the second argument will be assumed symmetrical.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The covariance function K(X, X2). Shape
+<span class="math">\(N \times M\)</span></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">(tf.Tensor)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">Kdiag</code><span class="sig-paren">(</span><em>instance</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/kernels.html#Stationary.Kdiag"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Builds a tensor that computes the diagonal of <code class="code docutils literal"><span class="pre">self.K(X)</span></code></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>X</strong> (<em>tf.Tensor</em>) &#8211; A tensor of shape <span class="math">\(N \times D\)</span>.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The diagonal of <code class="code docutils literal"><span class="pre">self.K(X)</span></code>. Shape <code class="code docutils literal"><span class="pre">N</span></code>.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">(tf.Tensor)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">euclid_dist</code><span class="sig-paren">(</span><em>instance</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/kernels.html#Stationary.euclid_dist"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>The Euclidean distances between X and X2.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>X</strong> (<em>tf.Tensor</em>) &#8211; A tensor of shape <span class="math">\(N \times D\)</span>.</li>
+<li><strong>X2</strong> (<em>Tf.Tensor | None</em>) &#8211; A tensor of shape <span class="math">\(M \times D\)</span>.
+If none, assumed to be symmetrical.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A tensor of shape <span class="math">\(N \times M\)</span>, where
+<code class="code docutils literal"><span class="pre">self.square_dist(X,</span> <span class="pre">X2)[a,</span> <span class="pre">b]</span></code> is the Euclidean distance
+between <code class="code docutils literal"><span class="pre">X[a]</span></code> and <code class="code docutils literal"><span class="pre">X2[b]</span></code>.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">(tf.Tensor)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">square_dist</code><span class="sig-paren">(</span><em>instance</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/kernels.html#Stationary.square_dist"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>The squared distances between X and X2.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>X</strong> (<em>tf.Tensor</em>) &#8211; A tensor of shape <span class="math">\(N \times D\)</span>.</li>
+<li><strong>X2</strong> (<em>Tf.Tensor | None</em>) &#8211; A tensor of shape <span class="math">\(M \times D\)</span>.
+If none, assumed to be symmetrical.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A tensor of shape <span class="math">\(N \times M\)</span>, where
+<code class="code docutils literal"><span class="pre">self.square_dist(X,</span> <span class="pre">X2)[a,</span> <span class="pre">b]</span></code> is the squared distance
+between <code class="code docutils literal"><span class="pre">X[a]</span></code> and <code class="code docutils literal"><span class="pre">X2[b]</span></code>.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">(tf.Tensor)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt>
+<em class="property">class </em><code class="descclassname">gptf.core.kernels.</code><code class="descname">White</code><span class="sig-paren">(</span><em>variance=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/kernels.html#White"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>The White kernel.</p>
+<dl class="method">
+<dt>
+<code class="descname">K</code><span class="sig-paren">(</span><em>X</em>, <em>X2=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/kernels.html#White.K"><span class="viewcode-link">[source]</span></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
 
 </div>
 <div class="section" id="likelihoods">
@@ -2899,7 +3573,7 @@ likelihoods (e.g. Gaussian, Poisson) will implement specific cases.</p>
 <p>GP regression with Gaussian noise.</p>
 <dl class="class">
 <dt>
-<em class="property">class </em><code class="descclassname">gptf.gpr.</code><code class="descname">GPR</code><span class="sig-paren">(</span><em>kernel</em>, <em>meanfunction=&lt;gptf.core.meanfunctions.Zero object</em>, <em>fallback_name unnamed</em>, <em>id 0x7f29762cd110&gt;</em>, <em>noise_variance=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/gpr.html#GPR"><span class="viewcode-link">[source]</span></a></dt>
+<em class="property">class </em><code class="descclassname">gptf.gpr.</code><code class="descname">GPR</code><span class="sig-paren">(</span><em>kernel</em>, <em>meanfunction=&lt;gptf.core.meanfunctions.Zero object</em>, <em>fallback_name unnamed</em>, <em>id 0x7f25e3e96190&gt;</em>, <em>noise_variance=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/gpr.html#GPR"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Gaussian process regression with Gaussian noise.</p>
 <dl class="attribute">
 <dt id="gptf.gpr.GPR.kernel">

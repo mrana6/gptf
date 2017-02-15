@@ -109,7 +109,7 @@ kernels
 
 All classes in this module inherit from :py:class:`gptf.Parameterized`.
 
-.. automodule:: gptf.core.densities
+.. automodule:: gptf.core.kernels
    :noindex:
    :members:
    :undoc-members:
