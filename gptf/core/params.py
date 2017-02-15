@@ -1354,19 +1354,19 @@ def autoflow(*wrapped_args):
 
     Args:
         *wrapped_args (Tuple[str]): A list of names of arguments to wrap. 
-        Supports either seperate strings for each argument name, or one 
-        string that is a space-separated list of argument names.
-            
-        .. code:: python
-            @autoflow('arg1', 'args3')
-            def method(self, arg1, arg2, arg3=1.):
-                ...
+            Supports either seperate strings for each argument name, or one 
+            string that is a space-separated list of argument names.
 
-            @autoflow('arg1 arg2')
-            def method(self, arg1, arg2, arg3=1.):
-                ...
+            .. code:: python
+                @autoflow('arg1', 'args3')
+                def method(self, arg1, arg2, arg3=1.):
+                    ...
 
-       Both of the above calls are precisely the same.
+                @autoflow('arg1 arg2')
+                def method(self, arg1, arg2, arg3=1.):
+                    ...
+
+           Both of the above calls are precisely the same.
 
     Returns:
         (Callable): A decorator that converts a TensorFlow method to a 
