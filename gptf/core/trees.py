@@ -2,7 +2,11 @@
 from builtins import super, object
 from future.utils import with_metaclass
 from abc import ABCMeta, abstractmethod, abstractproperty
-from collections import MutableSequence, Iterable
+try:
+    from collections.abc import MutableSequence, Iterable
+except ImportError:
+    from collections import MutableSequence, Iterable
+from collections import OrderedDict
 from functools import wraps
 from itertools import islice
 from overrides import overrides
@@ -1041,6 +1045,11 @@ def cache_method(capacity=128):
     """
     def decorator(method):
         sig = signature(method)
+        # drop first parameter
+        params = OrderedDict(sig.parameters)
+        del params[next(iter(sig.parameters))]
+        sig = sig.replace(parameters=params.values())
+        
         @wraps(method)
         def wrapper(instance, *args, **kwargs):
             cache_name = get_cache_name(method)
@@ -1050,7 +1059,7 @@ def cache_method(capacity=128):
 
             binding = sig.bind(*args, **kwargs)
             binding.apply_defaults()
-            key = frozenset(binding.arguments.items())
+            key = tuple(sorted(binding.arguments.items()))
 
             try:
                 hash(key)

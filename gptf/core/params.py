@@ -1333,10 +1333,7 @@ class ParamList(Parameterized, ListTree):
         else:
             super().__setitem__(key, value)
 
-PlaceholderSpec = namedtuple(
-        'PlaceholderSpec', 
-        *signature(tf.placeholder).parameters.keys())
-PlaceholderSpec.__new__.__defaults__ = tf.placeholder.__defaults__
+PlaceholderSpec = namedtuple('PlaceholderSpec', 'dtype shape')
 
 def autoflow(*wrapped_args):
     """Wraps up a TensorFlow method so that it takes NumPy and gives NumPy.
@@ -1434,8 +1431,8 @@ def autoflow(*wrapped_args):
         5
 
     """
-    if len(wrapped_args) == 1 and ' ' in wrapped_args:
-        wrapped_args = wrapped_args.split(' ')
+    if len(wrapped_args) == 1 and ' ' in wrapped_args[0]:
+        wrapped_args = wrapped_args[0].split(' ')
     wrapped_args = set(wrapped_args)
 
     def decorator(method):
@@ -1452,22 +1449,22 @@ def autoflow(*wrapped_args):
         """
         sig = signature(method)
         assert all(arg in sig.parameters for arg in wrapped_args),\
-                'args specified in autoflow must appear in parameters of '\
-                'wrapped function.'
+                ('args {} must appear in parameters of '
+                 'wrapped function: {}').format(wrapped_args, sig)
 
         @wraps(method)
         @tf_method(cache=False, rename_output=False)  # we do our own caching
         def wrapper(instance, *args, **kwargs):
             # deal with arguments
             kwarg_specs = kwargs.pop('autoflow_specs', {})
-            binding = sig.bind(args, kwargs)
+            binding = sig.bind(instance, *args, **kwargs)
             binding.apply_defaults()
 
             # Get placeholder / other specs for arguments.
             specs = {}
             for name in sig.parameters:
                 if name in wrapped_args and binding.arguments[name] is not None:
-                    np_arg = binding.arguments[name]
+                    np_arg = np.asarray(binding.arguments[name])
                     specs[name] = PlaceholderSpec(np_arg.dtype, np_arg.shape)
             specs.update(kwarg_specs)
 
@@ -1491,7 +1488,7 @@ def autoflow(*wrapped_args):
                             del subcache[key]
 
             if not found:
-                specs = frozenset(specs.items())
+                specs = tuple(sorted(specs.items()))
                 placeholders = {n: tf.placeholder(*spec) for n, spec in specs}
                 instance.cache[ph_cache][specs] = placeholders
             else:
@@ -1504,7 +1501,7 @@ def autoflow(*wrapped_args):
             binding.arguments.update(placeholders)
 
             # add tf_method wrapper for memoisation etc
-            op = tf_method()(method)(instance, *binding.args, **binding.kwargs)
+            op = tf_method()(method)(*binding.args, **binding.kwargs)
 
             with instance.get_session() as sess:
                 return sess.run(op, feed_dict=feed_dict)
