@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>gptf.core.utils &#8212; gptf 1.1.0 documentation</title>
+    <title>gptf.core.utils &#8212; gptf 1.1.1 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.1.0',
+        VERSION:     '1.1.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -48,9 +48,9 @@
 <span class="kn">from</span> <span class="nn">builtins</span> <span class="k">import</span> <span class="nb">map</span><span class="p">,</span> <span class="nb">range</span><span class="p">,</span> <span class="nb">zip</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">collections.abc</span> <span class="k">import</span> <span class="n">MutableMapping</span><span class="p">,</span> <span class="n">Mapping</span>
+    <span class="kn">from</span> <span class="nn">collections.abc</span> <span class="k">import</span> <span class="n">MutableMapping</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">MutableMapping</span><span class="p">,</span> <span class="n">Mapping</span>
+    <span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">MutableMapping</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">wraps</span><span class="p">,</span> <span class="n">partial</span>
 <span class="kn">import</span> <span class="nn">html</span>
 <span class="kn">import</span> <span class="nn">numbers</span>
@@ -59,21 +59,6 @@
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<div class="viewcode-block" id="FrozenDict"><a class="viewcode-back" href="../../../gptf.core.html#gptf.core.utils.FrozenDict">[docs]</a><span class="k">class</span> <span class="nc">FrozenDict</span><span class="p">(</span><span class="n">Mapping</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Equivalent for FrozenSet but for dicts.&quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dict_</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_items</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">dict_</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
-
-    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span> 
-        <span class="k">for</span> <span class="n">key_</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">key_</span> <span class="o">==</span> <span class="n">key_</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">value</span>
-        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> not in </span><span class="si">{}</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">a</span><span class="p">:</span> <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="p">)</span></div>
-
-        
 
 <div class="viewcode-block" id="LRUCache"><a class="viewcode-back" href="../../../gptf.core.html#gptf.core.utils.LRUCache">[docs]</a><span class="k">class</span> <span class="nc">LRUCache</span><span class="p">(</span><span class="n">MutableMapping</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A least-recently-used cache.</span>
@@ -363,7 +348,7 @@
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2016, Blaine Rogers.
+      &copy;2017, Blaine Rogers.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.2</a>

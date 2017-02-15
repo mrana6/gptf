@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>gptf.core.models &#8212; gptf 1.1.0 documentation</title>
+    <title>gptf.core.models &#8212; gptf 1.1.1 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.1.0',
+        VERSION:     '1.1.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -431,7 +431,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">NotImplemented</span></div>
 
-    <span class="nd">@autoflow</span><span class="p">(</span><span class="s1">&#39;test_points num_latent&#39;</span><span class="p">)</span>
+    <span class="nd">@autoflow</span><span class="p">(</span><span class="n">test_points</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;infer&#39;</span><span class="p">,</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;infer&#39;</span><span class="p">)),</span> 
+              <span class="n">num_latent</span><span class="o">=</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span> <span class="p">()))</span>
 <div class="viewcode-block" id="GPModel.compute_prior_mean_var"><a class="viewcode-back" href="../../../public_api.html#gptf.core.models.GPModel.compute_prior_mean_var">[docs]</a>    <span class="k">def</span> <span class="nf">compute_prior_mean_var</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_points</span><span class="p">,</span> <span class="n">num_latent</span><span class="p">,</span> <span class="n">full_cov</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Computes the means and variances of the prior(s).</span>
 
@@ -455,19 +456,20 @@
 <span class="sd">            (shape `[m, m, num_latent]`).</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">num_latent</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">num_latent</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_prior_mean_var</span><span class="p">(</span><span class="n">test_points</span><span class="p">,</span> <span class="n">num_latent</span><span class="p">,</span> <span class="n">full_cov</span><span class="p">)</span></div>
 
-    <span class="nd">@autoflow</span><span class="p">(</span><span class="s1">&#39;test_points num_latent&#39;</span><span class="p">)</span>
+    <span class="nd">@autoflow</span><span class="p">(</span><span class="n">test_points</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;infer&#39;</span><span class="p">,</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;infer&#39;</span><span class="p">)),</span> 
+              <span class="n">num_latent</span><span class="o">=</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span> <span class="p">()))</span>
 <div class="viewcode-block" id="GPModel.compute_prior_mean_cov"><a class="viewcode-back" href="../../../public_api.html#gptf.core.models.GPModel.compute_prior_mean_cov">[docs]</a>    <span class="k">def</span> <span class="nf">compute_prior_mean_cov</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_points</span><span class="p">,</span> <span class="n">num_latent</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Deprecated since version 1.1.0&quot;&quot;&quot;</span>
         <span class="n">warn</span><span class="p">(</span><span class="s1">&#39;This function is deprecated; instead call &#39;</span>
              <span class="s1">&#39;compute_posterior_mean_var(..., full_cov=True)&#39;</span><span class="p">,</span>
              <span class="ne">DeprecationWarning</span><span class="p">)</span>
-        <span class="n">num_latent</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">num_latent</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_posterior_mean_var</span><span class="p">(</span><span class="n">test_points</span><span class="p">,</span> <span class="n">num_latent</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span></div>
 
-    <span class="nd">@autoflow</span><span class="p">(</span><span class="s1">&#39;test_points num_latent num_samples&#39;</span><span class="p">)</span>
+    <span class="nd">@autoflow</span><span class="p">(</span><span class="n">test_points</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;infer&#39;</span><span class="p">,</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;infer&#39;</span><span class="p">)),</span> 
+              <span class="n">num_latent</span><span class="o">=</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span> <span class="p">()),</span> 
+              <span class="n">num_samples</span><span class="o">=</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span> <span class="p">()))</span>
 <div class="viewcode-block" id="GPModel.compute_prior_samples"><a class="viewcode-back" href="../../../public_api.html#gptf.core.models.GPModel.compute_prior_samples">[docs]</a>    <span class="k">def</span> <span class="nf">compute_prior_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_points</span><span class="p">,</span> <span class="n">num_latent</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">):</span> 
         <span class="sd">&quot;&quot;&quot;Computes samples from the prior distribution(s).</span>
 
@@ -558,7 +560,9 @@
         <span class="n">samples</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">mu</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">tf</span><span class="o">.</span><span class="n">batch_matmul</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span></div>
         
-    <span class="nd">@autoflow</span><span class="p">(</span><span class="s1">&#39;X Y test_points&#39;</span><span class="p">)</span>
+    <span class="nd">@autoflow</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;infer&#39;</span><span class="p">,</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;infer&#39;</span><span class="p">)),</span> 
+              <span class="n">Y</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;infer&#39;</span><span class="p">,</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;infer&#39;</span><span class="p">)),</span> 
+              <span class="n">test_points</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;infer&#39;</span><span class="p">,</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;infer&#39;</span><span class="p">)))</span>
 <div class="viewcode-block" id="GPModel.compute_posterior_mean_var"><a class="viewcode-back" href="../../../public_api.html#gptf.core.models.GPModel.compute_posterior_mean_var">[docs]</a>    <span class="k">def</span> <span class="nf">compute_posterior_mean_var</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">test_points</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Computes the means and variances of the posterior(s).</span>
 
@@ -584,7 +588,9 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_posterior_mean_var</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">test_points</span><span class="p">,</span> <span class="n">full_cov</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
 
-    <span class="nd">@autoflow</span><span class="p">(</span><span class="s1">&#39;X Y test_points&#39;</span><span class="p">)</span>
+    <span class="nd">@autoflow</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;infer&#39;</span><span class="p">,</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;infer&#39;</span><span class="p">)),</span> 
+              <span class="n">Y</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;infer&#39;</span><span class="p">,</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;infer&#39;</span><span class="p">)),</span> 
+              <span class="n">test_points</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;infer&#39;</span><span class="p">,</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;infer&#39;</span><span class="p">)))</span>
 <div class="viewcode-block" id="GPModel.compute_posterior_mean_cov"><a class="viewcode-back" href="../../../public_api.html#gptf.core.models.GPModel.compute_posterior_mean_cov">[docs]</a>    <span class="k">def</span> <span class="nf">compute_posterior_mean_cov</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">test_points</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Deprecated since version 1.1.0&quot;&quot;&quot;</span>
         <span class="n">warn</span><span class="p">(</span><span class="s1">&#39;This function is deprecated; instead call &#39;</span>
@@ -592,7 +598,10 @@
              <span class="ne">DeprecationWarning</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_posterior_mean_var</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">test_points</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span></div>
 
-    <span class="nd">@autoflow</span><span class="p">(</span><span class="s1">&#39;X Y test_points num_samples&#39;</span><span class="p">)</span>
+    <span class="nd">@autoflow</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;infer&#39;</span><span class="p">,</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;infer&#39;</span><span class="p">)),</span> 
+              <span class="n">Y</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;infer&#39;</span><span class="p">,</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;infer&#39;</span><span class="p">)),</span> 
+              <span class="n">test_points</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;infer&#39;</span><span class="p">,</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;infer&#39;</span><span class="p">)),</span>
+              <span class="n">num_samples</span><span class="o">=</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span> <span class="p">()))</span>
 <div class="viewcode-block" id="GPModel.compute_posterior_samples"><a class="viewcode-back" href="../../../public_api.html#gptf.core.models.GPModel.compute_posterior_samples">[docs]</a>    <span class="k">def</span> <span class="nf">compute_posterior_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">test_points</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">):</span> 
         <span class="sd">&quot;&quot;&quot;Computes samples from the posterior distribution(s).</span>
 
@@ -692,12 +701,10 @@
         <span class="c1">#    samples.append(mu[:, i:i + 1] + tf.matmul(L, V))  # broadcast</span>
         <span class="c1">#return tf.transpose(tf.pack(samples))</span>
 
-    <span class="nd">@autoflow</span><span class="p">(</span><span class="s1">&#39;test_points&#39;</span><span class="p">)</span>
 <div class="viewcode-block" id="GPModel.predict_y"><a class="viewcode-back" href="../../../public_api.html#gptf.core.models.GPModel.predict_y">[docs]</a>    <span class="k">def</span> <span class="nf">predict_y</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_points</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Computes the mean and variance of held-out data.&quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
-    <span class="nd">@autoflow</span><span class="p">(</span><span class="s1">&#39;test_points test_values&#39;</span><span class="p">)</span>
 <div class="viewcode-block" id="GPModel.predict_density"><a class="viewcode-back" href="../../../public_api.html#gptf.core.models.GPModel.predict_density">[docs]</a>    <span class="k">def</span> <span class="nf">predict_density</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_points</span><span class="p">,</span> <span class="n">test_values</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Computes the (log) density of the test values at the test points.&quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div></div>
@@ -733,7 +740,7 @@
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2016, Blaine Rogers.
+      &copy;2017, Blaine Rogers.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.2</a>

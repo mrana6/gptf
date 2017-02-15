@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Public API &#8212; gptf 1.1.0 documentation</title>
+    <title>Public API &#8212; gptf 1.1.1 documentation</title>
     
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '1.1.0',
+        VERSION:     '1.1.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -1638,7 +1638,7 @@ using Tensorflow, but interact with it using NumPy. It applies
 <a class="reference internal" href="#gptf.tf_method" title="gptf.tf_method"><code class="xref py py-func docutils literal"><span class="pre">gptf.tf_method()</span></code></a> for you.</p>
 <dl class="function">
 <dt>
-<code class="descclassname">gptf.</code><code class="descname">autoflow</code><span class="sig-paren">(</span><em>*wrapped_args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/params.html#autoflow"><span class="viewcode-link">[source]</span></a></dt>
+<code class="descclassname">gptf.</code><code class="descname">autoflow</code><span class="sig-paren">(</span><em>*wrapped_args</em>, <em>**arg_specs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/params.html#autoflow"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Wraps up a TensorFlow method so that it takes NumPy and gives NumPy.</p>
 <p>NB: Caching will not work properly unless all of the arguments to the
 decorated function are hashable.</p>
@@ -1655,7 +1655,8 @@ circumstances.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>*wrapped_args</strong> (<em>Tuple</em><em>[</em><em>str</em><em>]</em><em></em>) &#8211; <dl class="docutils">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>*wrapped_args</strong> (<em>Tuple</em><em>[</em><em>str</em><em>]</em><em></em>) &#8211; <dl class="docutils">
 <dt>A list of names of arguments to wrap.</dt>
 <dd>Supports either seperate strings for each argument name, or one
 string that is a space-separated list of argument names.<div class="code python last highlight-default"><div class="highlight"><pre><span></span><span class="nd">@autoflow</span><span class="p">(</span><span class="s1">&#39;arg1&#39;</span><span class="p">,</span> <span class="s1">&#39;args3&#39;</span><span class="p">)</span>
@@ -1670,12 +1671,33 @@ string that is a space-separated list of argument names.<div class="code python 
 </dd>
 </dl>
 <p>Both of the above calls are precisely the same.</p>
+</li>
+<li><strong>**arg_specs</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Tuple</em><em>]</em><em></em>) &#8211; <p>Keyword arguments can be used to
+constrain the type and shape of the wrapped arguemnts. For
+instance,</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="nd">@autoflow</span><span class="p">(</span><span class="s1">&#39;arg1&#39;</span><span class="p">,</span> <span class="n">arg2</span><span class="o">=</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)))</span>
+<span class="k">def</span> <span class="nf">method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg1</span><span class="p">,</span> <span class="n">arg2</span><span class="p">):</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+<p>ensures that the placeholder constructed for arg2 will be
+of rank 2, with dtype <code class="docutils literal"><span class="pre">tf.float64</span></code>.</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="nd">@autoflow</span><span class="p">(</span><span class="s1">&#39;arg1&#39;</span><span class="p">,</span> <span class="n">arg2</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;infer&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;infer&#39;</span><span class="p">,</span> <span class="bp">Ellipsis</span><span class="p">)))</span>
+<span class="k">def</span> <span class="nf">method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg1</span><span class="p">,</span> <span class="n">arg2</span><span class="p">):</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+<p>ensures only that arg2 will have rank <span class="math">\(\geq\)</span> 1.</p>
+</li>
+</ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A decorator that converts a TensorFlow method to a
-method that takes and returns NumPy array through autoflow magic.</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A decorator that converts a TensorFlow method to a
+method that takes and returns NumPy array through autoflow magic.</p>
+</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">(Callable)</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">(Callable)</p>
+</td>
 </tr>
 </tbody>
 </table>
@@ -1694,6 +1716,11 @@ method that takes and returns NumPy array through autoflow magic.</td>
 <span class="gp">... </span>            <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">subtract</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
 <span class="gp">... </span>        <span class="k">else</span><span class="p">:</span>
 <span class="gp">... </span>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;kind must be &#39;add&#39; or &#39;subtract&#39;&quot;</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="gp">... </span>    <span class="nd">@autoflow</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;infer&#39;</span><span class="p">)),</span>
+<span class="gp">... </span>              <span class="n">b</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;infer&#39;</span><span class="p">,</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="bp">Ellipsis</span><span class="p">)))</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">tf_batch_add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Now we can leverage the mighty power of TensorFlow without ever
@@ -1713,6 +1740,32 @@ one for each valid value for the unwrapped argument <code class="docutils litera
 <span class="go">14</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">tf_op</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="s1">&#39;subtract&#39;</span><span class="p">)</span>
 <span class="go">-4</span>
+</pre></div>
+</div>
+<p>We ensure using keyword arguments to <code class="docutils literal"><span class="pre">autoflow</span></code> that we can only
+call <code class="docutils literal"><span class="pre">.tf_batch_add</span></code> with a rank 2 tensor for <code class="docutils literal"><span class="pre">a</span></code>. The rank of
+<code class="docutils literal"><span class="pre">b</span></code> must be at least 1. We have also constrained the type that
+<code class="docutils literal"><span class="pre">a</span></code> can take.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">tf_batch_add</span><span class="p">([[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">]],</span> <span class="p">[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">])</span>
+<span class="go">array([[ 2., 4.]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">tf_batch_add</span><span class="p">([[</span><span class="mf">1.</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.</span><span class="p">]],</span> <span class="p">[[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">]])</span>
+<span class="go">array([[ 2., 4.],</span>
+<span class="go">       [ 4., 5.]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">tf_batch_add</span><span class="p">([[</span><span class="mf">1.</span><span class="o">+</span><span class="mi">2</span><span class="n">j</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="o">+</span><span class="mi">5</span><span class="n">j</span><span class="p">]],</span> <span class="p">[</span><span class="mf">0.</span><span class="p">])</span>
+<span class="gt">Traceback (most recent call last):</span>
+    <span class="o">...</span>
+<span class="gr">TypeError</span>: <span class="n">can&#39;t convert complex to float</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">tf_batch_add</span><span class="p">(</span><span class="mf">1.</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.</span><span class="p">])</span>
+<span class="gt">Traceback (most recent call last):</span>
+    <span class="o">...</span>
+<span class="gr">ValueError</span>: <span class="n">cannot unify shapes (None, &#39;infer&#39;) and ()</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">autoflow</span></code> will also look at the <code class="docutils literal"><span class="pre">autoflow_specs</span></code> argument when
+inferring the specifications for placeholders. This overrides any
+other placeholder specifications:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">tf_batch_add</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">autoflow_specs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">int64</span><span class="p">,</span> <span class="p">())})</span>
+<span class="go">array([1])</span>
 </pre></div>
 </div>
 <p>Autoflowed methods still work if the device context changes:</p>
@@ -2368,13 +2421,13 @@ returned by <code class="code docutils literal"><span class="pre">.build_predict
 
 <dl class="method">
 <dt id="gptf.GPModel.predict_density">
-<code class="descname">predict_density</code><span class="sig-paren">(</span><em>instance</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/models.html#GPModel.predict_density"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gptf.GPModel.predict_density" title="Permalink to this definition">¶</a></dt>
+<code class="descname">predict_density</code><span class="sig-paren">(</span><em>test_points</em>, <em>test_values</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/models.html#GPModel.predict_density"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gptf.GPModel.predict_density" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the (log) density of the test values at the test points.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="gptf.GPModel.predict_y">
-<code class="descname">predict_y</code><span class="sig-paren">(</span><em>instance</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/models.html#GPModel.predict_y"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gptf.GPModel.predict_y" title="Permalink to this definition">¶</a></dt>
+<code class="descname">predict_y</code><span class="sig-paren">(</span><em>test_points</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/core/models.html#GPModel.predict_y"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gptf.GPModel.predict_y" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the mean and variance of held-out data.</p>
 </dd></dl>
 
@@ -3573,7 +3626,7 @@ likelihoods (e.g. Gaussian, Poisson) will implement specific cases.</p>
 <p>GP regression with Gaussian noise.</p>
 <dl class="class">
 <dt>
-<em class="property">class </em><code class="descclassname">gptf.gpr.</code><code class="descname">GPR</code><span class="sig-paren">(</span><em>kernel</em>, <em>meanfunction=&lt;gptf.core.meanfunctions.Zero object</em>, <em>fallback_name unnamed</em>, <em>id 0x7f25e3e96190&gt;</em>, <em>noise_variance=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/gpr.html#GPR"><span class="viewcode-link">[source]</span></a></dt>
+<em class="property">class </em><code class="descclassname">gptf.gpr.</code><code class="descname">GPR</code><span class="sig-paren">(</span><em>kernel</em>, <em>meanfunction=&lt;gptf.core.meanfunctions.Zero object</em>, <em>fallback_name unnamed</em>, <em>id 0x7f548a065b50&gt;</em>, <em>noise_variance=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/gpr.html#GPR"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Gaussian process regression with Gaussian noise.</p>
 <dl class="attribute">
 <dt id="gptf.gpr.GPR.kernel">
@@ -4416,7 +4469,7 @@ layer of the rBCM.</li>
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2016, Blaine Rogers.
+      &copy;2017, Blaine Rogers.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.2</a>
