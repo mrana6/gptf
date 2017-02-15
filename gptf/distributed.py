@@ -436,7 +436,7 @@ class PriorDivisorReduction(GPModel, ParamAttributes):
     @tf_method()
     @overrides
     def build_log_likelihood(self, X, Y):
-        return child.build_log_likelihood(X, Y) 
+        return self.child.build_log_likelihood(X, Y) 
 
     @tf_method()
     @overrides

@@ -94,17 +94,19 @@ class Kernel(with_metaclass(ABCMeta, Parameterized)):
         """
         NotImplemented
 
-    @autoflow((tf.float64, (None, None)), (tf.float64, (None, None)))
-    def compute_K(self, X, Z):
+    @autoflow('X Z')
+    def compute_K(self, X, Z=None):
         """An autoflowed version of K(X, Z)"""
         return self.K(X, Z)
 
-    @autoflow((tf.float64, (None, None)))
+    @autoflow('X')
     def compute_K_symm(self, X):
-        """An autoflowed version of K(X)"""
+        """Deprecated since version 1.1.0"""
+        warn('This function is deprecated; instead call compute_K(X)',
+             DeprecationWarning)
         return self.K(X)
 
-    @autoflow((tf.float64, (None, None)))
+    @autoflow('X')
     def compute_Kdiag(self, X):
         """An autoflowed version of Kdiag(X)"""
         return self.K(X)
@@ -188,7 +190,7 @@ class PartiallyActive(Kernel, ParamAttributes):
         A slice of `:3` turns `X` into `X[:, :3]`.
 
         >>> k = PartiallyActive(Example(), slice(None, 3))  # :3
-        >>> X = np.arange(5).reshape(1, -1)
+        >>> X = np.arange(5, dtype=np.float64).reshape(1, -1)
         >>> X_k, _ = k.compute_K(X, X)
         >>> X_k.shape
         (1, 3)

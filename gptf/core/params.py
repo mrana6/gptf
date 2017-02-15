@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*-
 """Provides classes that deal with the fetching as setting of parameters."""
-from builtins import super, object, filter, map, range
+from builtins import super, object, filter, map, range, dict
 from future.utils import with_metaclass
 from abc import ABCMeta, abstractmethod
 from collections import namedtuple
@@ -9,12 +9,16 @@ import os
 import gc
 from weakref import WeakSet
 from contextlib import contextmanager
+try:
+    from inspect import signature
+except ImportError:  # python 2.x
+    from funcsigs import signature
 
 import numpy as np
 import tensorflow as tf
 from overrides import overrides
 
-from .trees import AttributeTree, Leaf, ListTree, Tree
+from .trees import AttributeTree, Leaf, ListTree, Tree, get_cache_name
 from .transforms import Transform, Identity
 from .wrappedtf import WrappedTF, tf_method
 from .utils import isclassof, isattrof, is_array_like
@@ -1329,8 +1333,13 @@ class ParamList(Parameterized, ListTree):
         else:
             super().__setitem__(key, value)
 
-def autoflow(*placeholder_specs):
+PlaceholderSpec = namedtuple('PlaceholderSpec', 'dtype shape')
+
+def autoflow(*wrapped_args):
     """Wraps up a TensorFlow method so that it takes NumPy and gives NumPy.
+
+    NB: Caching will not work properly unless all of the arguments to the
+    decorated function are hashable.
 
     When an autoflowed method is called, we construct placeholders to 
     represent the passed arguments, apply `tf_method` 
@@ -1344,51 +1353,60 @@ def autoflow(*placeholder_specs):
     circumstances.
 
     Args:
-        *placeholder_specs: some tuples that specify how the placeholders 
-            for the arguments of the decorated method should be 
-            constructed. Each tuple will be used as the arguments to a 
-            call to `tf.placeholder()`. The first tuple will be used to
-            construct the placeholder for the first argument of the
-            decorated function, the second for the second, and so on.
+        *wrapped_args (Tuple[str]): A list of names of arguments to wrap. 
+        Supports either seperate strings for each argument name, or one 
+        string that is a space-separated list of argument names.
+            
+        .. code:: python
+            @autoflow('arg1', 'args3')
+            def method(self, arg1, arg2, arg3=1.):
+                ...
+
+            @autoflow('arg1 arg2')
+            def method(self, arg1, arg2, arg3=1.):
+                ...
+
+       Both of the above calls are precisely the same.
 
     Returns:
-        A decorator that autoflows the decorated method.
+        (Callable): A decorator that converts a TensorFlow method to a 
+        method that takes and returns NumPy array through autoflow magic.
 
     Examples:
         The decorator syntax looks like this:
 
         >>> class MyClass(Parameterized, AttributeTree):
-        ...     @autoflow((tf.float64,), (tf.float64,))
+        ...     @autoflow('a b')
         ...     def tf_add(self, a, b):
         ...         return tf.add(a, b)
         ...
-        ...     @autoflow((tf.float64, [3, None]))
-        ...     def tf_reduce_sum(self, a):
-        ...         return tf.reduce_sum(a, 1)
+        ...     @autoflow('a b')
+        ...     def tf_op(self, a, b, kind):
+        ...         if kind == 'add':
+        ...             return tf.add(a, b)
+        ...         elif kind == 'subtract':
+        ...             return tf.subtract(a, b)
+        ...         else:
+        ...             raise ValueError("kind must be 'add' or 'subtract'")
 
-        Now we can leverage the mighty power of tensorflow without ever
+        Now we can leverage the mighty power of TensorFlow without ever
         having to get our hands dirty:
 
         >>> m = MyClass()
         >>> m.tf_add(5, 9)
-        14.0
+        14
         >>> a = np.array([1., 2., 3.])
         >>> b = np.array([4., 5., 6.])
         >>> m.tf_add(a, b)
         array([ 5., 7., 9.])
 
-        `MyClass.tf_reduce_sum` will only allow arguments that match the
-        shape `[1, None]`; that is, rank 2 tensors whose first dimension
-        is `5`.
+        ``autoflow`` will create two cached versions of ``MyClass.tf_op``,
+        one for each valid value for the unwrapped argument ``kind``:
 
-        >>> # shape is (3, 2), compatible with [3, None]
-        >>> m.tf_reduce_sum([[1., 2.], [2., 3.], [3., 4.]])
-        array([ 3., 5., 7.])
-        >>> # shape is (2, 1), not compatible with [3, None]
-        >>> m.tf_reduce_sum([[1.], [2.]])
-        Traceback (most recent call last):
-            ...
-        ValueError: Cannot feed value of shape (2, 1)...
+        >>> m.tf_op(5, 9, 'add')
+        14
+        >>> m.tf_op(5, 9, 'subtract')
+        -4
 
         Autoflowed methods still work if the device context changes:
 
@@ -1410,14 +1428,16 @@ def autoflow(*placeholder_specs):
         >>> m.tf_session_target = master.target
         >>> # autoflow
         >>> m.tf_add(3, 2)
-        5.0
-        >>> m.tf_reduce_sum([[1., 2., 3.], [4., 5., 6.], [7., 8., 9.]])
-        array([  6., 15., 24.])
+        5
 
     """
+    if len(wrapped_args) == 1 and ' ' in wrapped_args[0]:
+        wrapped_args = wrapped_args[0].split(' ')
+    wrapped_args = set(wrapped_args)
+
     def decorator(method):
-        """A decorator that autoflows a method.
-        
+        """A decorater than converts a TensorFlow method to NumPy.
+
         Args:
             method (Callable[[Parameterized, ...], tf.Tensor]): A method 
                 of a `Parameterized` that returns a TensorFlow op.
@@ -1427,24 +1447,84 @@ def autoflow(*placeholder_specs):
             returns a NumPy array through autoflow magic.
 
         """
-        @tf_method(cache=False)
+        sig = signature(method)
+        assert all(arg in sig.parameters for arg in wrapped_args),\
+                ('args {} must appear in parameters of '
+                 'wrapped function: {}').format(wrapped_args, sig)
+
         @wraps(method)
-        def wrapper(instance, *np_args):
-            name = '_Parameterized__autoflow__{}'.format(method.__name__)
-            if name in instance.cache:
-                storage = instance.cache[name]
+        @tf_method(cache=False, rename_output=False)  # we do our own caching
+        def wrapper(instance, *args, **kwargs):
+            # deal with arguments
+            kwarg_specs = kwargs.pop('autoflow_specs', {})
+            binding = sig.bind(instance, *args, **kwargs)
+            binding.apply_defaults()
+
+            # Get placeholder / other specs for arguments.
+            specs = {}
+            for name in sig.parameters:
+                if name in wrapped_args and binding.arguments[name] is not None:
+                    np_arg = np.asarray(binding.arguments[name])
+                    specs[name] = PlaceholderSpec(np_arg.dtype, np_arg.shape)
+            specs.update(kwarg_specs)
+
+            # Set up placeholder cache
+            ph_cache = '_autoflow__{}'.format(method.__name__)
+            if ph_cache not in instance.cache:
+                instance.cache[ph_cache] = {}
+
+            # Check for compatible cached placeholders
+            found = False
+            for cached_specs in instance.cache[ph_cache].copy():
+                if all(_compatible(specs[n], s) for n, s in cached_specs):
+                    found = True
+                    specs = cached_specs
+                    break
+                elif all(_compatible(s, specs[n]) for n, s in cached_specs):
+                    subcache = instance.cache.get(get_cache_name(method), {})
+                    for key in subcache.copy():
+                        cached_args = dict(key)
+                        if _matches(cached_args, cached_specs):
+                            del subcache[key]
+                    del instance.cache[ph_cache][cached_specs]
+
+            if not found:
+                specs = tuple(sorted(specs.items()))
+                placeholders = {n: tf.placeholder(*spec) for n, spec in specs}
+                instance.cache[ph_cache][specs] = placeholders
             else:
-                tf_args = [tf.placeholder(*s) for s in placeholder_specs]
-                storage =\
-                        { 'op': method(instance, *tf_args)
-                        , 'tf_args': tf_args
-                        }
-                instance.cache[name] = storage
-            feed_dict = dict(zip(storage['tf_args'], np_args))
+                placeholders = instance.cache[ph_cache][specs]
+
+            feed_dict = {placeholders[name]: binding.arguments[name]
+                         for name in placeholders}
             feed_dict.update(instance.feed_dict)
             
+            binding.arguments.update(placeholders)
+
+            # add tf_method wrapper for memoisation etc
+            op = tf_method()(method)(*binding.args, **binding.kwargs)
+
             with instance.get_session() as sess:
-                return sess.run(storage['op'], feed_dict=feed_dict)
+                return sess.run(op, feed_dict=feed_dict)
         return wrapper
     return decorator
 
+def _matches(args_dict, specs):
+    for name, spec in specs:
+        if name not in args_dict or not _matches_spec(args_dict[name], spec):
+            return False
+    return True
+
+def _matches_spec(ph, spec):
+    spec_name = '' if spec.name == None else spec.name
+    return (ph.dtype == spec.dtype and 
+            ph.get_shape() == spec.shape and
+            spec.name in ph.name)
+
+def _compatible(spec0, spec1):
+    return (np.can_cast(spec0.dtype, spec1.dtype) and 
+            _broadcastable(spec0.shape, spec1.shape))
+
+def _broadcastable(shape0, shape1):
+    return all(a in {1, None} or b in {1, None} or a == b 
+               for a, b in zip(shape0[::-1], shape1[::-1]))
