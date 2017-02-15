@@ -1475,17 +1475,18 @@ def autoflow(*wrapped_args):
 
             # Check for compatible cached placeholders
             found = False
-            for cached_specs in instance.cache[ph_cache]:
+            for cached_specs in instance.cache[ph_cache].copy():
                 if all(_compatible(specs[n], s) for n, s in cached_specs):
                     found = True
                     specs = cached_specs
                     break
                 elif all(_compatible(s, specs[n]) for n, s in cached_specs):
-                    subcache = instance.cache[get_cache_name(method)]
+                    subcache = instance.cache.get(get_cache_name(method), {})
                     for key in subcache.copy():
                         cached_args = dict(key)
                         if _matches(cached_args, cached_specs):
                             del subcache[key]
+                    del instance.cache[ph_cache][cached_specs]
 
             if not found:
                 specs = tuple(sorted(specs.items()))
