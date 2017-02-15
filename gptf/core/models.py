@@ -321,7 +321,8 @@ class GPModel(Model):
         Y|F ~ p(Y|F)
 
     Adds functionality to compile various predictions. Inheriting 
-    classes must define `.build_predict()`, which is then used by this 
+    classes must define `.build_prior_mean_var()`, and 
+    `.build_posterior_mean_var()`, which are then used by this 
     class's methods to provide various predictions. The mean and 
     variance are pushed through the likelihood to obtain the means and 
     variances of held out data.
@@ -409,6 +410,7 @@ class GPModel(Model):
             (shape `[m, m, num_latent]`).
 
         """
+        num_latent = tf.cast(num_latent, tf.int32)
         return self.build_prior_mean_var(test_points, num_latent, full_cov)
 
     @autoflow('test_points num_latent')
@@ -417,6 +419,7 @@ class GPModel(Model):
         warn('This function is deprecated; instead call '
              'compute_posterior_mean_var(..., full_cov=True)',
              DeprecationWarning)
+        num_latent = tf.cast(num_latent, tf.int32)
         return self.build_posterior_mean_var(test_points, num_latent, True)
 
     @autoflow('test_points num_latent num_samples')
@@ -464,13 +467,13 @@ class GPModel(Model):
             ...             (self, test_points, num_latent, full_cov=False):
             ...         n = tf.shape(test_points)[0]
             ...         mu = tf.zeros([n, 1], self.dtype)
-            ...         mu = tf.tile(mu, (1, num_latent))
+            ...         mu = tf.tile(mu, tf.pack([1, num_latent]))
             ...         if full_cov:
             ...             var = tf.expand_dims(tfhacks.eye(n, self.dtype), 2)
-            ...             var = tf.tile(var, (1, 1, num_latent))
+            ...             var = tf.tile(var, tf.pack([1, 1, num_latent]))
             ...         else:
             ...             var = tf.ones([n, 1], self.dtype)
-            ...             var = tf.tile(var, (1, num_latent))
+            ...             var = tf.tile(var, tf.pack([1, num_latent]))
             ...         return mu, var
             ...     @tf_method()
             ...     @overrides
@@ -499,6 +502,9 @@ class GPModel(Model):
             dtype('float32')
             
         """
+        num_latent = tf.cast(num_latent, tf.int32)
+        num_samples = tf.cast(num_samples, tf.int32)
+
         mu, var = self.build_prior_mean_var(test_points, num_latent, True)
         jitter = tfhacks.eye(tf.shape(mu)[0], var.dtype) * 1e-06
         L = tf.cholesky(tf.transpose(var, (2, 0, 1)) + jitter)
@@ -593,13 +599,13 @@ class GPModel(Model):
             ...         n = tf.shape(test_points)[0]
             ...         num_latent = tf.shape(Y)[1]
             ...         mu = tf.zeros([n, 1], self.dtype)
-            ...         mu = tf.tile(mu, (1, num_latent))
+            ...         mu = tf.tile(mu, tf.pack([1, num_latent]))
             ...         if full_cov:
             ...             var = tf.expand_dims(tfhacks.eye(n, self.dtype), 2)
-            ...             var = tf.tile(var, (1, 1, num_latent))
+            ...             var = tf.tile(var, tf.pack([1, 1, num_latent]))
             ...         else:
             ...             var = tf.ones([n, 1], self.dtype)
-            ...             var = tf.tile(var, (1, num_latent))
+            ...             var = tf.tile(var, tf.pack([1, num_latent]))
             ...         return mu, var
             >>> m = Example(tf.float64)
             >>> X = np.array([[.5]])
@@ -625,6 +631,8 @@ class GPModel(Model):
             dtype('float32')
             
         """
+        num_samples = tf.cast(num_samples, tf.int32)
+
         mu, var = self.build_posterior_mean_var(X, Y, test_points, True)
         jitter = tfhacks.eye(tf.shape(mu)[0], var.dtype) * 1e-06
         L = tf.cholesky(tf.transpose(var, (2, 0, 1)) + jitter)
