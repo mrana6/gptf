@@ -4,7 +4,13 @@ from future.utils import with_metaclass
 from abc import ABCMeta, abstractmethod, abstractproperty
 from collections import MutableSequence, Iterable
 from functools import wraps
+from itertools import islice
 from overrides import overrides
+
+try:
+    from inspect import signature
+except ImportError:  # python 2.x
+    from funcsigs import signature
 
 from .utils import LRUCache
 
@@ -1034,13 +1040,18 @@ def cache_method(capacity=128):
 
     """
     def decorator(method):
+        sig = signature(method)
         @wraps(method)
         def wrapper(instance, *args, **kwargs):
-            cache_name = '__tf_method_cache_{}'.format(id(method))
+            cache_name = get_cache_name(method)
             if cache_name not in instance.cache:
                 instance.cache[cache_name] = LRUCache(capacity)
             method_cache = instance.cache[cache_name]
-            key = (args, frozenset(kwargs.items()))
+
+            binding = sig.bind(*args, **kwargs)
+            binding.apply_defaults()
+            key = frozenset(binding.arguments.items())
+
             try:
                 hash(key)
             except TypeError:
@@ -1051,3 +1062,18 @@ def cache_method(capacity=128):
                 return method_cache[key]
         return wrapper
     return decorator
+
+def get_cache_name(method):
+    """Returns the name of the cache of a method.
+
+    If you're using this method in code outside :py:mod:`gptf.core`, you're
+    probably doing something wrong.
+
+    Args:
+        method (Callable): The method to cache.
+
+    Returns:
+        (Hashable) The name of the method in the cache.
+
+    """
+    return '__tf_method_cache_{}'.format(id(method))

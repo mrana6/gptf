@@ -41,7 +41,7 @@ kw_args['install_requires'] =\
 kw_args['dependency_links'] = []
 kw_args['tests_require'] = []
 if sys.version[:1] == '2':
-    kw_args['install_requires'].extend(["contextlib2>=0.5"])
+    kw_args['install_requires'].extend(['contextlib2>=0.5', 'funcsigs'])
 
 setup\
         ( name=PACKAGE_NAME

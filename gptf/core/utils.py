@@ -3,9 +3,9 @@
 from builtins import map, range, zip
 from collections import OrderedDict
 try:
-    from collections.abc import MutableMapping
+    from collections.abc import MutableMapping, Mapping
 except ImportError:
-    from collections import MutableMapping
+    from collections import MutableMapping, Mapping
 from functools import wraps, partial
 import html
 import numbers
@@ -13,6 +13,22 @@ import os
 import re
 
 import numpy as np
+
+class FrozenDict(Mapping):
+    """Equivalent for FrozenSet but for dicts."""
+    def __init__(self, dict_):
+        self._items = tuple(sorted(dict_.values()))
+
+    def __getitem__(self, key): 
+        for key_, value in self._items:
+            if key_ == key_:
+                return value
+        raise KeyError('{} not in {}').format(key, self)
+
+    def __iter__(self):
+        return map(lambda a: a[0] for a in self._items)
+
+        
 
 class LRUCache(MutableMapping):
     """A least-recently-used cache.
