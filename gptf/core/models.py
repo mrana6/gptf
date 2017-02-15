@@ -58,7 +58,7 @@ class Model(with_metaclass(ABCMeta, Parameterized)):
         NotImplemented
 
     def build_log_prior(self):
-        NotImplemented
+        raise NotImplementedError
 
     @autoflow('X Y')
     def compute_log_likelihood(self, X, Y):
@@ -71,7 +71,7 @@ class Model(with_metaclass(ABCMeta, Parameterized)):
         return self.build_log_likelihood(X, Y)
 
     def compute_log_prior(self):
-        NotImplemented
+        raise NotImplementedError
 
     @tf_method(cache=False)
     def optimize(self, X, Y, method='L-BFGS-B', callback=None, 
@@ -457,7 +457,7 @@ class GPModel(Model):
             ...     @tf_method()
             ...     @overrides
             ...     def build_log_likelihood(self):
-            ...         NotImplemented
+            ...         raise NotImplementedError
             ...     @tf_method()
             ...     @overrides
             ...     def build_prior_mean_var\\
@@ -476,7 +476,7 @@ class GPModel(Model):
             ...     @overrides
             ...     def build_posterior_mean_var\\
             ...             (self, X, Y, test_points, full_cov=False):
-            ...         NotImplemented
+            ...         raise NotImplementedError
             >>> m = Example(tf.float64)  # ignore the likelihood
             >>> test_points = np.array([[0.], [1.], [2.], [3.]])
 
@@ -580,12 +580,12 @@ class GPModel(Model):
             ...     @tf_method()
             ...     @overrides
             ...     def build_log_likelihood(self):
-            ...         NotImplemented
+            ...         raise NotImplementedError
             ...     @tf_method()
             ...     @overrides
             ...     def build_prior_mean_var\\
             ...             (self, test_points, num_latent, full_cov=False):
-            ...         NotImplemented
+            ...         raise NotImplementedError
             ...     @tf_method()
             ...     @overrides
             ...     def build_posterior_mean_var\\
@@ -642,9 +642,9 @@ class GPModel(Model):
     @autoflow('test_points')
     def predict_y(self, test_points):
         """Computes the mean and variance of held-out data."""
-        NotImplemented
+        raise NotImplementedError
 
     @autoflow('test_points test_values')
     def predict_density(self, test_points, test_values):
         """Computes the (log) density of the test values at the test points."""
-        NotImplemented
+        raise NotImplementedError
