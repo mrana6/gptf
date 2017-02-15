@@ -386,7 +386,8 @@ class GPModel(Model):
         """
         NotImplemented
 
-    @autoflow('test_points num_latent')
+    @autoflow(test_points=('infer', (None, 'infer')), 
+              num_latent=(tf.int32, ()))
     def compute_prior_mean_var(self, test_points, num_latent, full_cov=False):
         """Computes the means and variances of the prior(s).
 
@@ -410,19 +411,20 @@ class GPModel(Model):
             (shape `[m, m, num_latent]`).
 
         """
-        num_latent = tf.cast(num_latent, tf.int32)
         return self.build_prior_mean_var(test_points, num_latent, full_cov)
 
-    @autoflow('test_points num_latent')
+    @autoflow(test_points=('infer', (None, 'infer')), 
+              num_latent=(tf.int32, ()))
     def compute_prior_mean_cov(self, test_points, num_latent):
         """Deprecated since version 1.1.0"""
         warn('This function is deprecated; instead call '
              'compute_posterior_mean_var(..., full_cov=True)',
              DeprecationWarning)
-        num_latent = tf.cast(num_latent, tf.int32)
         return self.build_posterior_mean_var(test_points, num_latent, True)
 
-    @autoflow('test_points num_latent num_samples')
+    @autoflow(test_points=('infer', (None, 'infer')), 
+              num_latent=(tf.int32, ()), 
+              num_samples=(tf.int32, ()))
     def compute_prior_samples(self, test_points, num_latent, num_samples): 
         """Computes samples from the prior distribution(s).
 
@@ -513,7 +515,9 @@ class GPModel(Model):
         samples = tf.expand_dims(tf.transpose(mu), -1) + tf.batch_matmul(L, V)
         return tf.transpose(samples)
         
-    @autoflow('X Y test_points')
+    @autoflow(X=('infer', (None, 'infer')), 
+              Y=('infer', (None, 'infer')), 
+              test_points=('infer', (None, 'infer')))
     def compute_posterior_mean_var(self, X, Y, test_points):
         """Computes the means and variances of the posterior(s).
 
@@ -539,7 +543,9 @@ class GPModel(Model):
         """
         return self.build_posterior_mean_var(X, Y, test_points, full_cov=False)
 
-    @autoflow('X Y test_points')
+    @autoflow(X=('infer', (None, 'infer')), 
+              Y=('infer', (None, 'infer')), 
+              test_points=('infer', (None, 'infer')))
     def compute_posterior_mean_cov(self, X, Y, test_points):
         """Deprecated since version 1.1.0"""
         warn('This function is deprecated; instead call '
@@ -547,7 +553,10 @@ class GPModel(Model):
              DeprecationWarning)
         return self.build_posterior_mean_var(X, Y, test_points, True)
 
-    @autoflow('X Y test_points num_samples')
+    @autoflow(X=('infer', (None, 'infer')), 
+              Y=('infer', (None, 'infer')), 
+              test_points=('infer', (None, 'infer')),
+              num_samples=(tf.int32, ()))
     def compute_posterior_samples(self, X, Y, test_points, num_samples): 
         """Computes samples from the posterior distribution(s).
 
@@ -647,12 +656,10 @@ class GPModel(Model):
         #    samples.append(mu[:, i:i + 1] + tf.matmul(L, V))  # broadcast
         #return tf.transpose(tf.pack(samples))
 
-    @autoflow('test_points')
     def predict_y(self, test_points):
         """Computes the mean and variance of held-out data."""
         raise NotImplementedError
 
-    @autoflow('test_points test_values')
     def predict_density(self, test_points, test_values):
         """Computes the (log) density of the test values at the test points."""
         raise NotImplementedError
