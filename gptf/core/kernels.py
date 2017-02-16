@@ -506,12 +506,12 @@ class Negative(Kernel, ParamAttributes):
     @tf_method()
     @overrides
     def K(self, X, X2=None):
-        return tf.neg(self.negated.K(X, X2))
+        return tf.negative(self.negated.K(X, X2))
 
     @tf_method()
     @overrides
     def Kdiag(self, X):
-        return tf.neg(self.negated.Kdiag(X))
+        return tf.negative(self.negated.Kdiag(X))
 
     @overrides
     def __neg__(self):
@@ -546,13 +546,13 @@ class Additive(Kernel, ParamList):
     @tf_method()
     @overrides
     def K(self, X, X2=None):
-        vals = tf.pack([k.K(X, X2) for k in self.children])
+        vals = tf.stack([k.K(X, X2) for k in self.children])
         return tf.reduce_sum(vals, 0)
 
     @tf_method()
     @overrides
     def Kdiag(self, X):
-        vals = tf.pack([k.Kdiag(X) for k in self.children])
+        vals = tf.stack([k.Kdiag(X) for k in self.children])
         return tf.reduce_sum(vals, 0)
 
     def __iadd__(self, other):
@@ -580,13 +580,13 @@ class Multiplicative(Kernel, ParamList):
     @tf_method()
     @overrides
     def K(self, X, X2=None):
-        vals = tf.pack([k.K(X, X2) for k in self.children])
+        vals = tf.stack([k.K(X, X2) for k in self.children])
         return tf.reduce_prod(vals, 0)
 
     @tf_method()
     @overrides
     def Kdiag(self, X):
-        vals = tf.pack([k.Kdiag(X) for k in self.operands])
+        vals = tf.stack([k.Kdiag(X) for k in self.operands])
         return tf.reduce_prod(vals, 0)
 
     def __imul__(self, other):

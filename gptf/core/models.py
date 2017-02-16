@@ -267,7 +267,7 @@ class Model(with_metaclass(ABCMeta, Parameterized)):
 
         variables = [p.free_state for p in self.params if not p.fixed]
         variables = utils.unique(variables)
-        free_state = tf.concat(0, [tf.reshape(v, [-1]) for v in variables])
+        free_state = tf.concat([tf.reshape(v, [-1]) for v in variables], 0)
 
         with self.get_session() as sess:
             try:
@@ -469,13 +469,13 @@ class GPModel(Model):
             ...             (self, test_points, num_latent, full_cov=False):
             ...         n = tf.shape(test_points)[0]
             ...         mu = tf.zeros([n, 1], self.dtype)
-            ...         mu = tf.tile(mu, tf.pack([1, num_latent]))
+            ...         mu = tf.tile(mu, tf.stack([1, num_latent]))
             ...         if full_cov:
             ...             var = tf.expand_dims(tfhacks.eye(n, self.dtype), 2)
-            ...             var = tf.tile(var, tf.pack([1, 1, num_latent]))
+            ...             var = tf.tile(var, tf.stack([1, 1, num_latent]))
             ...         else:
             ...             var = tf.ones([n, 1], self.dtype)
-            ...             var = tf.tile(var, tf.pack([1, num_latent]))
+            ...             var = tf.tile(var, tf.stack([1, num_latent]))
             ...         return mu, var
             ...     @tf_method()
             ...     @overrides
@@ -512,7 +512,7 @@ class GPModel(Model):
         L = tf.cholesky(tf.transpose(var, (2, 0, 1)) + jitter)
         V_shape = [tf.shape(L)[0], tf.shape(L)[1], num_samples]
         V = tf.random_normal(V_shape, dtype=L.dtype)
-        samples = tf.expand_dims(tf.transpose(mu), -1) + tf.batch_matmul(L, V)
+        samples = tf.expand_dims(tf.transpose(mu), -1) + tf.matmul(L, V)
         return tf.transpose(samples)
         
     @autoflow(X=('infer', (None, 'infer')), 
@@ -608,13 +608,13 @@ class GPModel(Model):
             ...         n = tf.shape(test_points)[0]
             ...         num_latent = tf.shape(Y)[1]
             ...         mu = tf.zeros([n, 1], self.dtype)
-            ...         mu = tf.tile(mu, tf.pack([1, num_latent]))
+            ...         mu = tf.tile(mu, tf.stack([1, num_latent]))
             ...         if full_cov:
             ...             var = tf.expand_dims(tfhacks.eye(n, self.dtype), 2)
-            ...             var = tf.tile(var, tf.pack([1, 1, num_latent]))
+            ...             var = tf.tile(var, tf.stack([1, 1, num_latent]))
             ...         else:
             ...             var = tf.ones([n, 1], self.dtype)
-            ...             var = tf.tile(var, tf.pack([1, num_latent]))
+            ...             var = tf.tile(var, tf.stack([1, num_latent]))
             ...         return mu, var
             >>> m = Example(tf.float64)
             >>> X = np.array([[.5]])
@@ -647,14 +647,14 @@ class GPModel(Model):
         L = tf.cholesky(tf.transpose(var, (2, 0, 1)) + jitter)
         V_shape = [tf.shape(L)[0], tf.shape(L)[1], num_samples]
         V = tf.random_normal(V_shape, dtype=L.dtype)
-        samples = tf.expand_dims(tf.transpose(mu), -1) + tf.batch_matmul(L, V)
+        samples = tf.expand_dims(tf.transpose(mu), -1) + tf.matmul(L, V)
         return tf.transpose(samples)
         #samples = []
         #for i in range(self.num_latent_functions):
         #    L = tf.cholesky(var[:, :, i] + jitter)
         #    V = tf.random_normal([tf.shape(L)[0], num_samples], dtype=L.dtype)
         #    samples.append(mu[:, i:i + 1] + tf.matmul(L, V))  # broadcast
-        #return tf.transpose(tf.pack(samples))
+        #return tf.transpose(tf.stack(samples))
 
     def predict_y(self, test_points):
         """Computes the mean and variance of held-out data."""

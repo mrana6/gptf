@@ -32,12 +32,20 @@ if not all(kw_args.get(arg, None) for arg in args_needed):
     raise RuntimeError("Unable to find required info in {}".format(infofile))
 
 kw_args['install_requires'] =\
-        [ 'tensorflow>=r0.11'
-        , 'scipy'
+        [ 'scipy'
         , 'numpy'
         , 'future>=0.15'
         , 'overrides>=1.7'
         ]
+
+# tensorflow is also available under the name tensorflow-gpu. Don't install
+# the cpu version if the gpu version is available.
+try:
+    import tensorflow as tf
+    assert tf.__version__ >= '1.0'
+except (ImportError, AssertionError):
+    kw_args['install_requires'].append(['tensorflow>=1.0'])
+
 kw_args['dependency_links'] = []
 kw_args['tests_require'] = []
 if sys.version[:1] == '2':

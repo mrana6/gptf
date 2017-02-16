@@ -57,7 +57,7 @@ def cao_fleet_weights(experts, X, Y, points):
         # return very small value instead of zero
         return tf.maximum(weight, np.finfo(np.float64).eps)
     M = len(experts)
-    chunks = zip(experts, tf.split(0, M, X), tf.split(0, M, Y))
+    chunks = zip(experts, tf.split(X, M, 0), tf.split(Y, M, 0))
     return tuple(weight(*chunk) for chunk in chunks)
 
 def equal_weights(experts, X, Y, points):
@@ -117,7 +117,7 @@ class Reduction(GPModel, ParamList):
         """The sum of the log likelihoods of the children."""
         chunks = self._get_chunks(X, Y)
         lmls = [child.build_log_likelihood(Xk, Yk) for child, Xk, Yk in chunks]
-        return tf.reduce_sum(tf.pack(lmls, 0), 0)
+        return tf.reduce_sum(tf.stack(lmls, 0), 0)
 
     @tf_method()
     @overrides
@@ -130,14 +130,14 @@ class Reduction(GPModel, ParamList):
                             test_points, num_latent, full_cov
                         ) for child in self.children])
         M = float(len(self.children))
-        mu, var = tf.pack(mu, 0), tf.pack(var, 0)
+        mu, var = tf.stack(mu, 0), tf.stack(var, 0)
         return tf.reduce_sum(mu, 0) / M, tf.reduce_sum(var, 0) / M
 
     @tf_method()
     def _get_chunks(self, X, Y):
         """Seperates X and Y into chunks, pairing each chunk with a child."""
         M = len(self.children)
-        return zip(self.children, tf.split(0, M, X), tf.split(0, M, Y))
+        return zip(self.children, tf.split(X, M, 0), tf.split(Y, M, 0))
 
 class PoEReduction(Reduction):
     """Combines the predictions of its children using the PoE model.
@@ -182,7 +182,7 @@ class PoEReduction(Reduction):
         mu, var = zip(*[child.build_posterior_mean_var(
                             Xk, Yk, test_points, full_cov
                         ) for child, Xk, Yk in chunks])
-        mu, var = tf.pack(mu, 0), tf.pack(var, 0)
+        mu, var = tf.stack(mu, 0), tf.stack(var, 0)
         joint_var = 1 / tf.reduce_sum(1 / var, 0)
         joint_mu = joint_var * tf.reduce_sum(mu / var, 0)
         return joint_mu, joint_var
@@ -243,7 +243,7 @@ class gPoEReduction(Reduction):
     #                        test_points, num_latent, full_cov
     #                    ) for child in self.children])
     #    weight = self.weightfunction(self.children, test_points)
-    #    mu, var, weight = map(lambda x: tf.pack(x, 0), (mu, var, weight))
+    #    mu, var, weight = map(lambda x: tf.stack(x, 0), (mu, var, weight))
 
     #    w_total = tf.reduce_sum(weight, 0)
     #    joint_mu = tf.reduce_sum(weight * mu, 0) / w_total
@@ -261,7 +261,7 @@ class gPoEReduction(Reduction):
                             Xk, Yk, test_points, full_cov
                         ) for child, Xk, Yk in chunks])
         weight = self.weightfunction(self.children, X, Y, test_points)
-        mu, var, weight = map(lambda x: tf.pack(x, 0), (mu, var, weight))
+        mu, var, weight = map(lambda x: tf.stack(x, 0), (mu, var, weight))
 
         joint_var = 1 / tf.reduce_sum(weight / var, 0)
         joint_mu = joint_var * tf.reduce_sum(weight * mu / var, 0)
@@ -312,7 +312,7 @@ class BCMReduction(Reduction):
         mu, var = zip(*[child.build_posterior_mean_var(
                             Xk, Yk, test_points, full_cov
                         ) for child, Xk, Yk in chunks])
-        mu, var = tf.pack(mu, 0), tf.pack(var, 0)
+        mu, var = tf.stack(mu, 0), tf.stack(var, 0)
 
         num_latent = tf.shape(Y)[1]
         prior_var = self.build_prior_mean_var(test_points, num_latent)[1]
@@ -379,7 +379,7 @@ class rBCMReduction(Reduction):
     #                        test_points, num_latent, full_cov
     #                    ) for child in self.children])
     #    weight = self.weightfunction(self.children, test_points)
-    #    mu, var, weight = map(lambda x: tf.pack(x, 0), (mu, var, weight))
+    #    mu, var, weight = map(lambda x: tf.stack(x, 0), (mu, var, weight))
 
     #    w_total = tf.reduce_sum(weight, 0)
     #    joint_mu = tf.reduce_sum(weight * mu, 0) / w_total
@@ -397,7 +397,7 @@ class rBCMReduction(Reduction):
                             Xk, Yk, test_points, full_cov
                         ) for child, Xk, Yk in chunks])
         weight = self.weightfunction(self.children, X, Y, test_points)
-        mu, var, weight = map(lambda x: tf.pack(x, 0), (mu, var, weight))
+        mu, var, weight = map(lambda x: tf.stack(x, 0), (mu, var, weight))
 
         num_latent = tf.shape(Y)[1]
         prior_var = self.build_prior_mean_var(test_points, num_latent)[1]
@@ -517,7 +517,7 @@ def tree_rBCM(experts, weightfunction, architecture):
     assert len(layer) == 1
     def total_weight(_, X, Y, test_points):
         weights = weightfunction(experts, X, Y, test_points)
-        return [tf.reduce_sum(tf.pack(weights, 0), 0)]
+        return [tf.reduce_sum(tf.stack(weights, 0), 0)]
 
     return PriorDivisorReduction(layer[0], total_weight)
 
