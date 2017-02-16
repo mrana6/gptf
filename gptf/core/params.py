@@ -1500,6 +1500,7 @@ def autoflow(*wrapped_args, **arg_specs):
             returns a NumPy array through autoflow magic.
 
         """
+        wrapped_method = tf_method()(method)
         sig = signature(method)
         assert all(arg in sig.parameters for arg in wrapped_args),\
                 ('args {} must appear in parameters of '
@@ -1561,7 +1562,7 @@ def autoflow(*wrapped_args, **arg_specs):
             binding.arguments.update(placeholders)
 
             # add tf_method wrapper for memoisation etc
-            op = tf_method()(method)(*binding.args, **binding.kwargs)
+            op = wrapped_method(*binding.args, **binding.kwargs)
 
             with instance.get_session() as sess:
                 return sess.run(op, feed_dict=feed_dict)
