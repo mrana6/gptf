@@ -14,16 +14,22 @@ and documentation can be found [here][documentation].
 
 ## Installation
 
-1. [Install TensorFlow manually][install tensorflow] (at least version r0.11).
-2. Run `python setup.py develop`.
+```bash
+git clone https://github.com/ICL-SML/gptf
+cd gptf
+pip install .
+```
 
 ## Running tests
 
-Tests can be run using `python setup.py nosetests`.
-
+```bash
+git clone https://github.com/ICL-SML/gptf
+cd gptf
+pip install nose
+nosetests
+```
 
 [tensorflow]: https://www.tensorflow.org
-[install tensorflow]: https://www.tensorflow.org/versions/r0.11/get_started/os_setup.html#pip-installation
 [GPflow]: https://github.com/GPflow/GPflow
 [notebooks]: notebooks
 [documentation]: http://icl-sml.github.io/gptf/
