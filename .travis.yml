@@ -28,14 +28,12 @@ install:
   - conda create -q -n test-environment python=3.5 numpy scipy future nomkl nose 
   - conda install libgcc
   - source activate test-environment
-  - pip install coveralls
-  #- conda install -c conda-forge tensorflow
   - pip install tensorflow
+  - pip install .
   #https://storage.googleapis.com/tensorflow/linux/cpu/tensorflow-0.10.0-cp35-cp35m-linux_x86_64.whl
   - pip install coveralls
-  - python setup.py .
 script:
-  - coverage run --source=gptf setup.py nosetests --verbosity=5
+  - coverage run setup.py nosetests --verbosity=5
   
 after_success:
   coveralls  
