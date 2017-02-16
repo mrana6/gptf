@@ -29,7 +29,7 @@ Installation
 
 or, from source:
 
-.. ocde:: bash
+.. code:: bash
 
    git clone https://github.com/ICL-SML/gptf
    cd gptf
