@@ -25,9 +25,16 @@ Installation
 
 .. code:: bash
 
+   pip install gptf
+
+or, from source:
+
+.. ocde:: bash
+
    git clone https://github.com/ICL-SML/gptf
    cd gptf
    pip install .
+
 
 Running tests
 -------------
