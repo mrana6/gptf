@@ -53,12 +53,11 @@ if sys.version[:1] == '2':
 
 setup\
         ( name=PACKAGE_NAME
+        , url='https://github.com/ICL-SML/gptf'
         , description=
             ( "Distributed GPs using TensorFlow." )
         , packages=
-            [ PACKAGE_NAME ]
-        , package_dir=
-            { PACKAGE_NAME : PACKAGE_NAME }
+            [ PACKAGE_NAME, PACKAGE_NAME + '.core' ]
         , setup_requires=
             [ 'nose>=1.0' ]
         , classifiers=
@@ -66,6 +65,7 @@ setup\
             , "Programming Language :: Python :: 2.7"
             , "Programming Language :: Python :: 3.4"
             , "Programming Language :: Python :: 3.5"
+            , "Programming Language :: Python :: 3.6"
             , "Topic :: Scientific/Engineering :: Artificial Intelligence"
             ]
         , **kw_args
