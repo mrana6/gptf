@@ -24,7 +24,7 @@ class GPR(GPModel, ParamAttributes):
         >>> from gptf import kernels
         >>> gp = GPR(kernels.RBF(variance=10.))
         >>> gp.fallback_name = "gp"
-        >>> gp.likelihood.variance = .25 # reduce noise
+        >>> gp.likelihood.variance = .025 # reduce noise
         >>> print(gp.summary(fmt='plain'))
         Parameterized object gp
         <BLANKLINE>
@@ -33,14 +33,14 @@ class GPR(GPModel, ParamAttributes):
             -----------------------+--------+-----------+------
             gp.kernel.lengthscales | 1.000  | +ve (Exp) | nyi
             gp.kernel.variance     | 10.000 | +ve (Exp) | nyi
-            gp.likelihood.variance | 0.250  | +ve (Exp) | nyi
+            gp.likelihood.variance | 0.025  | +ve (Exp) | nyi
         <BLANKLINE>
 
         To generate some sample training outputs, we'll compute a 
         sample from the prior with one latent function at our
         training inputs.
         
-        >>> X = np.random.uniform(0., 5., (500, 1)) # 500 unique 1d points
+        >>> X = np.random.uniform(0., 5., (1000, 1)) # 500 unique 1d points
         >>> Y = gp.compute_prior_samples(X, 1, 1)[0]
 
         Then we'll add some noise:
@@ -58,17 +58,18 @@ class GPR(GPModel, ParamAttributes):
         >>> gp.optimize(X, Y, disp=False)
         message: 'SciPy optimizer completed successfully.'
         success: True
-              x: array([...,...,...])
-        >>> def vaguely_close_to(param, b):
-        ...     v = param.value
-        ...     return abs(v - b) < v*.25
-        
-        >>> vaguely_close_to(gp.kernel.lengthscales, 1.)
-        True
-        >>> vaguely_close_to(gp.kernel.variance, 10.)
-        True
-        >>> vaguely_close_to(gp.likelihood.variance, .25)
-        True
+              x: array([...,...,...]) 
+	
+	We check whether the values have changed after optimisation
+	>>> gp.kernel.variance.value != 5.
+	True
+	
+	>>> gp.kernel.lengthscales.value != 5.
+	True
+	
+	>>> gp.likelihood.variance.value != 5.
+	True
+
 
     """
     def __init__(self, kernel, meanfunction=meanfunctions.Zero(),
