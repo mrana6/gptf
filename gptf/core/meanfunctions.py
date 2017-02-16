@@ -259,7 +259,7 @@ class Negative(MeanFunction, ParamAttributes):
     @tf_method()
     @overrides
     def __call__(self, X):
-        return tf.neg(self.negated(X))
+        return tf.negative(self.negated(X))
 
     @overrides
     def __neg__(self):
@@ -289,7 +289,7 @@ class Additive(MeanFunction, ParamList):
     @tf_method()
     @overrides
     def __call__(self, X):
-        vals = tf.pack([f(X) for f in self.children])
+        vals = tf.stack([f(X) for f in self.children])
         return tf.reduce_sum(vals, 0)
 
     def __iadd__(self, other):
@@ -317,7 +317,7 @@ class Multiplicative(MeanFunction, ParamList):
     @tf_method()
     @overrides
     def __call__(self, X):
-        vals = tf.pack([f(X) for f in self.children])
+        vals = tf.stack([f(X) for f in self.children])
         return tf.reduce_prod(vals, 0)
 
     def __imul__(self, other):
