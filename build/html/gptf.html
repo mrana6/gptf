@@ -95,7 +95,7 @@ for the <span class="math">\(k\)</span>th child.</p>
 <p>Attributes: See <code class="code docutils literal"><span class="pre">GPModel</span></code> and <code class="code docutils literal"><span class="pre">ParamList</span></code>.</p>
 <dl class="method">
 <dt id="gptf.distributed.BCMReduction.build_posterior_mean_var">
-<code class="descname">build_posterior_mean_var</code><span class="sig-paren">(</span><em>instance</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/distributed.html#BCMReduction.build_posterior_mean_var"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gptf.distributed.BCMReduction.build_posterior_mean_var" title="Permalink to this definition">¶</a></dt>
+<code class="descname">build_posterior_mean_var</code><span class="sig-paren">(</span><em>X</em>, <em>Y</em>, <em>test_points</em>, <em>full_cov=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/distributed.html#BCMReduction.build_posterior_mean_var"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gptf.distributed.BCMReduction.build_posterior_mean_var" title="Permalink to this definition">¶</a></dt>
 <dd><p>Builds an op for the mean and variance of the posterior(s).</p>
 <p>In the returned tensors, the last index should always be the
 latent function index.</p>
@@ -153,7 +153,7 @@ for the <span class="math">\(k\)</span>th child.</p>
 <p>Attributes: See <code class="xref py py-obj docutils literal"><span class="pre">GPModel</span></code> and <code class="xref py py-obj docutils literal"><span class="pre">ParamList</span></code>.</p>
 <dl class="method">
 <dt id="gptf.distributed.PoEReduction.build_posterior_mean_var">
-<code class="descname">build_posterior_mean_var</code><span class="sig-paren">(</span><em>instance</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/distributed.html#PoEReduction.build_posterior_mean_var"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gptf.distributed.PoEReduction.build_posterior_mean_var" title="Permalink to this definition">¶</a></dt>
+<code class="descname">build_posterior_mean_var</code><span class="sig-paren">(</span><em>X</em>, <em>Y</em>, <em>test_points</em>, <em>full_cov=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/distributed.html#PoEReduction.build_posterior_mean_var"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gptf.distributed.PoEReduction.build_posterior_mean_var" title="Permalink to this definition">¶</a></dt>
 <dd><p>Builds an op for the mean and variance of the posterior(s).</p>
 <p>In the returned tensors, the last index should always be the
 latent function index.</p>
@@ -214,7 +214,7 @@ the posterior mean and variance with a prior division term.</p>
 
 <dl class="method">
 <dt id="gptf.distributed.PriorDivisorReduction.build_log_likelihood">
-<code class="descname">build_log_likelihood</code><span class="sig-paren">(</span><em>instance</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/distributed.html#PriorDivisorReduction.build_log_likelihood"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gptf.distributed.PriorDivisorReduction.build_log_likelihood" title="Permalink to this definition">¶</a></dt>
+<code class="descname">build_log_likelihood</code><span class="sig-paren">(</span><em>X</em>, <em>Y</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/distributed.html#PriorDivisorReduction.build_log_likelihood"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gptf.distributed.PriorDivisorReduction.build_log_likelihood" title="Permalink to this definition">¶</a></dt>
 <dd><p>Builds the log likelihood of the model w.r.t. the data.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -239,7 +239,7 @@ likelihood of the model.</p>
 
 <dl class="method">
 <dt id="gptf.distributed.PriorDivisorReduction.build_posterior_mean_var">
-<code class="descname">build_posterior_mean_var</code><span class="sig-paren">(</span><em>instance</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/distributed.html#PriorDivisorReduction.build_posterior_mean_var"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gptf.distributed.PriorDivisorReduction.build_posterior_mean_var" title="Permalink to this definition">¶</a></dt>
+<code class="descname">build_posterior_mean_var</code><span class="sig-paren">(</span><em>X</em>, <em>Y</em>, <em>test_points</em>, <em>full_cov=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/distributed.html#PriorDivisorReduction.build_posterior_mean_var"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gptf.distributed.PriorDivisorReduction.build_posterior_mean_var" title="Permalink to this definition">¶</a></dt>
 <dd><p>Builds an op for the mean and variance of the posterior(s).</p>
 <p>In the returned tensors, the last index should always be the
 latent function index.</p>
@@ -277,7 +277,7 @@ Both tensors have the same dtype.</p>
 
 <dl class="method">
 <dt id="gptf.distributed.PriorDivisorReduction.build_prior_mean_var">
-<code class="descname">build_prior_mean_var</code><span class="sig-paren">(</span><em>instance</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/distributed.html#PriorDivisorReduction.build_prior_mean_var"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gptf.distributed.PriorDivisorReduction.build_prior_mean_var" title="Permalink to this definition">¶</a></dt>
+<code class="descname">build_prior_mean_var</code><span class="sig-paren">(</span><em>test_points</em>, <em>num_latent</em>, <em>full_cov=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/distributed.html#PriorDivisorReduction.build_prior_mean_var"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gptf.distributed.PriorDivisorReduction.build_prior_mean_var" title="Permalink to this definition">¶</a></dt>
 <dd><p>Builds an op for the mean and variance of the prior(s).</p>
 <p>In the returned tensors, the last index should always be the
 latent function index.</p>
@@ -322,13 +322,13 @@ Both tensors have the same dtype.</p>
 <p>Common code for distributed GP reductions.</p>
 <dl class="method">
 <dt id="gptf.distributed.Reduction.build_log_likelihood">
-<code class="descname">build_log_likelihood</code><span class="sig-paren">(</span><em>instance</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/distributed.html#Reduction.build_log_likelihood"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gptf.distributed.Reduction.build_log_likelihood" title="Permalink to this definition">¶</a></dt>
+<code class="descname">build_log_likelihood</code><span class="sig-paren">(</span><em>X</em>, <em>Y</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/distributed.html#Reduction.build_log_likelihood"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gptf.distributed.Reduction.build_log_likelihood" title="Permalink to this definition">¶</a></dt>
 <dd><p>The sum of the log likelihoods of the children.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="gptf.distributed.Reduction.build_prior_mean_var">
-<code class="descname">build_prior_mean_var</code><span class="sig-paren">(</span><em>instance</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/distributed.html#Reduction.build_prior_mean_var"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gptf.distributed.Reduction.build_prior_mean_var" title="Permalink to this definition">¶</a></dt>
+<code class="descname">build_prior_mean_var</code><span class="sig-paren">(</span><em>test_points</em>, <em>num_latent</em>, <em>full_cov=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/distributed.html#Reduction.build_prior_mean_var"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gptf.distributed.Reduction.build_prior_mean_var" title="Permalink to this definition">¶</a></dt>
 <dd><p>The arithetic mean of the prior mean / variance of the chilren.</p>
 </dd></dl>
 
@@ -351,7 +351,7 @@ of the <span class="math">\(k\)</span>th expert at the point <span class="math">
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>experts</strong> (<em>Sequence</em><em>[</em><a class="reference internal" href="public_api.html#gptf.GPModel" title="gptf.GPModel"><em>GPModel</em></a><em>]</em><em></em>) &#8211; the experts to calculate
+<li><strong>experts</strong> (<em>Sequence</em><em>[</em><a class="reference internal" href="gptf.core.html#gptf.core.models.GPModel" title="gptf.core.models.GPModel"><em>GPModel</em></a><em>]</em><em></em>) &#8211; the experts to calculate
 the weights of.</li>
 <li><strong>X</strong> (<em>tf.Tensor</em>) &#8211; the training inputs, shape <code class="code docutils literal"><span class="pre">[n,</span> <span class="pre">point_dims]</span></code>.</li>
 <li><strong>Y</strong> (<em>tf.Tensor</em>) &#8211; the training outputs, shape <code class="code docutils literal"><span class="pre">[n,</span> <span class="pre">num_latent]</span></code>.</li>
@@ -427,13 +427,13 @@ server job.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>experts</strong> (<em>GPModel | Sequence</em><em>[</em><a class="reference internal" href="public_api.html#gptf.GPModel" title="gptf.GPModel"><em>GPModel</em></a><em>]</em><em></em>) &#8211; The experts to
+<li><strong>experts</strong> (<em>GPModel | Sequence</em><em>[</em><a class="reference internal" href="gptf.core.html#gptf.core.models.GPModel" title="gptf.core.models.GPModel"><em>GPModel</em></a><em>]</em><em></em>) &#8211; The experts to
 combine the opinions of. If this is a <code class="code docutils literal"><span class="pre">GPModel</span></code>, then it
 will be shallow-copied to fill out the architecture.
 If it is a sequence of <code class="code docutils literal"><span class="pre">GPModel</span></code>s, then the architecture
 will have as many nodes in its final layer as
 there are in the sequence.</li>
-<li><strong>weightfunction</strong> (<em>Callable</em><em>[</em><em></em><em>[</em><em>Sequence</em><em>[</em><a class="reference internal" href="public_api.html#gptf.GPModel" title="gptf.GPModel"><em>GPModel</em></a><em>]</em><em></em><em>, </em><em>tf.Tensor</em><em>, </em><em>tf.Tensor</em><em>, </em><em>tf.Tensor</em><em>]</em><em></em><em>, </em><em>Tuple</em><em>[</em><em>tf.Tensor</em><em>]</em><em></em><em>]</em><em></em>) &#8211; A function used to calculate the weight of the experts.</li>
+<li><strong>weightfunction</strong> (<em>Callable</em><em>[</em><em></em><em>[</em><em>Sequence</em><em>[</em><a class="reference internal" href="gptf.core.html#gptf.core.models.GPModel" title="gptf.core.models.GPModel"><em>GPModel</em></a><em>]</em><em></em><em>, </em><em>tf.Tensor</em><em>, </em><em>tf.Tensor</em><em>, </em><em>tf.Tensor</em><em>]</em><em></em><em>, </em><em>Tuple</em><em>[</em><em>tf.Tensor</em><em>]</em><em></em><em>]</em><em></em>) &#8211; A function used to calculate the weight of the experts.</li>
 <li><strong>clusterspec</strong> (<em>tf.train.ClusterSpec</em>) &#8211; The cluster to
 distribute tasks over.</li>
 <li><strong>worker_job</strong> (<em>str</em>) &#8211; The job to assign computationally
@@ -467,7 +467,7 @@ every point and <span class="math">\(M\)</span> is the number of experts.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>experts</strong> (<em>Sequence</em><em>[</em><a class="reference internal" href="public_api.html#gptf.GPModel" title="gptf.GPModel"><em>GPModel</em></a><em>]</em><em></em>) &#8211; the experts to calculate
+<li><strong>experts</strong> (<em>Sequence</em><em>[</em><a class="reference internal" href="gptf.core.html#gptf.core.models.GPModel" title="gptf.core.models.GPModel"><em>GPModel</em></a><em>]</em><em></em>) &#8211; the experts to calculate
 the weights of.</li>
 <li><strong>X</strong> (<em>tf.Tensor</em>) &#8211; the training inputs, shape <code class="code docutils literal"><span class="pre">[n,</span> <span class="pre">point_dims]</span></code>.</li>
 <li><strong>Y</strong> (<em>tf.Tensor</em>) &#8211; the training outputs, shape <code class="code docutils literal"><span class="pre">[n,</span> <span class="pre">num_latent]</span></code>.</li>
@@ -517,7 +517,7 @@ the prior outside the range of the data.</p>
 <p>For other attributes, see <code class="code docutils literal"><span class="pre">GPModel</span></code> and <code class="code docutils literal"><span class="pre">ParamList</span></code>.</p>
 <dl class="method">
 <dt id="gptf.distributed.gPoEReduction.build_posterior_mean_var">
-<code class="descname">build_posterior_mean_var</code><span class="sig-paren">(</span><em>instance</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/distributed.html#gPoEReduction.build_posterior_mean_var"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gptf.distributed.gPoEReduction.build_posterior_mean_var" title="Permalink to this definition">¶</a></dt>
+<code class="descname">build_posterior_mean_var</code><span class="sig-paren">(</span><em>X</em>, <em>Y</em>, <em>test_points</em>, <em>full_cov=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/distributed.html#gPoEReduction.build_posterior_mean_var"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gptf.distributed.gPoEReduction.build_posterior_mean_var" title="Permalink to this definition">¶</a></dt>
 <dd><p>Builds an op for the mean and variance of the posterior(s).</p>
 <p>In the returned tensors, the last index should always be the
 latent function index.</p>
@@ -565,7 +565,7 @@ Both tensors have the same dtype.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>experts</strong> (<em>Sequence</em><em>[</em><a class="reference internal" href="public_api.html#gptf.GPModel" title="gptf.GPModel"><em>GPModel</em></a><em>]</em><em></em>) &#8211; the experts to calculate
+<li><strong>experts</strong> (<em>Sequence</em><em>[</em><a class="reference internal" href="gptf.core.html#gptf.core.models.GPModel" title="gptf.core.models.GPModel"><em>GPModel</em></a><em>]</em><em></em>) &#8211; the experts to calculate
 the weights of.</li>
 <li><strong>X</strong> (<em>tf.Tensor</em>) &#8211; the training inputs, shape <code class="code docutils literal"><span class="pre">[n,</span> <span class="pre">point_dims]</span></code>.</li>
 <li><strong>Y</strong> (<em>tf.Tensor</em>) &#8211; the training outputs, shape <code class="code docutils literal"><span class="pre">[n,</span> <span class="pre">num_latent]</span></code>.</li>
@@ -616,7 +616,7 @@ the data.</p>
 <p>For other attributes, see <code class="code docutils literal"><span class="pre">GPModel</span></code> and <code class="code docutils literal"><span class="pre">ParamList</span></code>.</p>
 <dl class="method">
 <dt id="gptf.distributed.rBCMReduction.build_posterior_mean_var">
-<code class="descname">build_posterior_mean_var</code><span class="sig-paren">(</span><em>instance</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/distributed.html#rBCMReduction.build_posterior_mean_var"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gptf.distributed.rBCMReduction.build_posterior_mean_var" title="Permalink to this definition">¶</a></dt>
+<code class="descname">build_posterior_mean_var</code><span class="sig-paren">(</span><em>X</em>, <em>Y</em>, <em>test_points</em>, <em>full_cov=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/distributed.html#rBCMReduction.build_posterior_mean_var"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gptf.distributed.rBCMReduction.build_posterior_mean_var" title="Permalink to this definition">¶</a></dt>
 <dd><p>Builds an op for the mean and variance of the posterior(s).</p>
 <p>In the returned tensors, the last index should always be the
 latent function index.</p>
@@ -663,7 +663,7 @@ Both tensors have the same dtype.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>experts</strong> (<em>GPModel | Sequence</em><em>[</em><a class="reference internal" href="public_api.html#gptf.GPModel" title="gptf.GPModel"><em>GPModel</em></a><em>]</em><em></em>) &#8211; <p>The experts to
+<li><strong>experts</strong> (<em>GPModel | Sequence</em><em>[</em><a class="reference internal" href="gptf.core.html#gptf.core.models.GPModel" title="gptf.core.models.GPModel"><em>GPModel</em></a><em>]</em><em></em>) &#8211; <p>The experts to
 combine the opinions of. If this is a <code class="code docutils literal"><span class="pre">GPModel</span></code>, then it
 will be shallow-copied to fill out the architecture.
 If it is a sequence of <code class="code docutils literal"><span class="pre">GPModel</span></code>s, then the architecture
@@ -672,7 +672,7 @@ there are in the sequence, i.e.</p>
 <blockquote>
 <div>len(experts) == reduce(operator.mul,architecture,1)</div></blockquote>
 </li>
-<li><strong>weightfunction</strong> (<em>Callable</em><em>[</em><em></em><em>[</em><em>Sequence</em><em>[</em><a class="reference internal" href="public_api.html#gptf.GPModel" title="gptf.GPModel"><em>GPModel</em></a><em>]</em><em></em><em>, </em><em>tf.Tensor</em><em>, </em><em>tf.Tensor</em><em>, </em><em>tf.Tensor</em><em>]</em><em></em><em>, </em><em>Tuple</em><em>[</em><em>tf.Tensor</em><em>]</em><em></em><em>]</em><em></em>) &#8211; A function used to calculate the weight of the experts.</li>
+<li><strong>weightfunction</strong> (<em>Callable</em><em>[</em><em></em><em>[</em><em>Sequence</em><em>[</em><a class="reference internal" href="gptf.core.html#gptf.core.models.GPModel" title="gptf.core.models.GPModel"><em>GPModel</em></a><em>]</em><em></em><em>, </em><em>tf.Tensor</em><em>, </em><em>tf.Tensor</em><em>, </em><em>tf.Tensor</em><em>]</em><em></em><em>, </em><em>Tuple</em><em>[</em><em>tf.Tensor</em><em>]</em><em></em><em>]</em><em></em>) &#8211; A function used to calculate the weight of the experts.</li>
 <li><strong>architecture</strong> (<em>Sequence</em><em>[</em><em>int</em><em>]</em><em></em>) &#8211; The branching factors at each
 layer of the rBCM.</li>
 </ul>
@@ -688,7 +688,7 @@ layer of the rBCM.</li>
 <p>GP regression with Gaussian noise.</p>
 <dl class="class">
 <dt id="gptf.gpr.GPR">
-<em class="property">class </em><code class="descclassname">gptf.gpr.</code><code class="descname">GPR</code><span class="sig-paren">(</span><em>kernel</em>, <em>meanfunction=&lt;gptf.core.meanfunctions.Zero object</em>, <em>fallback_name unnamed</em>, <em>id 0x7f548a065b50&gt;</em>, <em>noise_variance=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/gpr.html#GPR"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gptf.gpr.GPR" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">gptf.gpr.</code><code class="descname">GPR</code><span class="sig-paren">(</span><em>kernel</em>, <em>meanfunction=&lt;gptf.core.meanfunctions.Zero object</em>, <em>fallback_name unnamed</em>, <em>id 0x7fb960363080&gt;</em>, <em>noise_variance=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/gpr.html#GPR"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gptf.gpr.GPR" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="gptf.core.html#gptf.core.models.GPModel" title="gptf.core.models.GPModel"><code class="xref py py-class docutils literal"><span class="pre">gptf.core.models.GPModel</span></code></a>, <a class="reference internal" href="gptf.core.html#gptf.core.params.ParamAttributes" title="gptf.core.params.ParamAttributes"><code class="xref py py-class docutils literal"><span class="pre">gptf.core.params.ParamAttributes</span></code></a></p>
 <p>Gaussian process regression with Gaussian noise.</p>
 <dl class="attribute">
@@ -764,7 +764,7 @@ to their original state.</p>
 </div>
 <dl class="method">
 <dt id="gptf.gpr.GPR.build_log_likelihood">
-<code class="descname">build_log_likelihood</code><span class="sig-paren">(</span><em>instance</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/gpr.html#GPR.build_log_likelihood"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gptf.gpr.GPR.build_log_likelihood" title="Permalink to this definition">¶</a></dt>
+<code class="descname">build_log_likelihood</code><span class="sig-paren">(</span><em>X</em>, <em>Y</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/gpr.html#GPR.build_log_likelihood"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gptf.gpr.GPR.build_log_likelihood" title="Permalink to this definition">¶</a></dt>
 <dd><p>Builds the log likelihood of the model w.r.t. the data.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -789,7 +789,7 @@ likelihood of the model.</p>
 
 <dl class="method">
 <dt id="gptf.gpr.GPR.build_posterior_mean_var">
-<code class="descname">build_posterior_mean_var</code><span class="sig-paren">(</span><em>instance</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/gpr.html#GPR.build_posterior_mean_var"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gptf.gpr.GPR.build_posterior_mean_var" title="Permalink to this definition">¶</a></dt>
+<code class="descname">build_posterior_mean_var</code><span class="sig-paren">(</span><em>X</em>, <em>Y</em>, <em>test_points</em>, <em>full_cov=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/gpr.html#GPR.build_posterior_mean_var"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gptf.gpr.GPR.build_posterior_mean_var" title="Permalink to this definition">¶</a></dt>
 <dd><p>Builds an op for the mean and variance of the posterior(s).</p>
 <p>In the returned tensors, the last index should always be the
 latent function index.</p>
@@ -827,7 +827,7 @@ Both tensors have the same dtype.</p>
 
 <dl class="method">
 <dt id="gptf.gpr.GPR.build_prior_mean_var">
-<code class="descname">build_prior_mean_var</code><span class="sig-paren">(</span><em>instance</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/gpr.html#GPR.build_prior_mean_var"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gptf.gpr.GPR.build_prior_mean_var" title="Permalink to this definition">¶</a></dt>
+<code class="descname">build_prior_mean_var</code><span class="sig-paren">(</span><em>test_points</em>, <em>num_latent</em>, <em>full_cov=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gptf/gpr.html#GPR.build_prior_mean_var"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gptf.gpr.GPR.build_prior_mean_var" title="Permalink to this definition">¶</a></dt>
 <dd><p>Builds an op for the mean and variance of the prior(s).</p>
 <p>In the returned tensors, the last index should always be the
 latent function index.</p>

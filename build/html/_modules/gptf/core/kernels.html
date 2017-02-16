@@ -551,12 +551,12 @@
     <span class="nd">@tf_method</span><span class="p">()</span>
     <span class="nd">@overrides</span>
 <div class="viewcode-block" id="Negative.K"><a class="viewcode-back" href="../../../public_api.html#gptf.core.kernels.Negative.K">[docs]</a>    <span class="k">def</span> <span class="nf">K</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">X2</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">neg</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">negated</span><span class="o">.</span><span class="n">K</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">X2</span><span class="p">))</span></div>
+        <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">negative</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">negated</span><span class="o">.</span><span class="n">K</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">X2</span><span class="p">))</span></div>
 
     <span class="nd">@tf_method</span><span class="p">()</span>
     <span class="nd">@overrides</span>
 <div class="viewcode-block" id="Negative.Kdiag"><a class="viewcode-back" href="../../../public_api.html#gptf.core.kernels.Negative.Kdiag">[docs]</a>    <span class="k">def</span> <span class="nf">Kdiag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">neg</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">negated</span><span class="o">.</span><span class="n">Kdiag</span><span class="p">(</span><span class="n">X</span><span class="p">))</span></div>
+        <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">negative</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">negated</span><span class="o">.</span><span class="n">Kdiag</span><span class="p">(</span><span class="n">X</span><span class="p">))</span></div>
 
     <span class="nd">@overrides</span>
     <span class="k">def</span> <span class="nf">__neg__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -591,13 +591,13 @@
     <span class="nd">@tf_method</span><span class="p">()</span>
     <span class="nd">@overrides</span>
 <div class="viewcode-block" id="Additive.K"><a class="viewcode-back" href="../../../public_api.html#gptf.core.kernels.Additive.K">[docs]</a>    <span class="k">def</span> <span class="nf">K</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">X2</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="n">vals</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">pack</span><span class="p">([</span><span class="n">k</span><span class="o">.</span><span class="n">K</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">X2</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">])</span>
+        <span class="n">vals</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">k</span><span class="o">.</span><span class="n">K</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">X2</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_sum</span><span class="p">(</span><span class="n">vals</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span></div>
 
     <span class="nd">@tf_method</span><span class="p">()</span>
     <span class="nd">@overrides</span>
 <div class="viewcode-block" id="Additive.Kdiag"><a class="viewcode-back" href="../../../public_api.html#gptf.core.kernels.Additive.Kdiag">[docs]</a>    <span class="k">def</span> <span class="nf">Kdiag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
-        <span class="n">vals</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">pack</span><span class="p">([</span><span class="n">k</span><span class="o">.</span><span class="n">Kdiag</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">])</span>
+        <span class="n">vals</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">k</span><span class="o">.</span><span class="n">Kdiag</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_sum</span><span class="p">(</span><span class="n">vals</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">__iadd__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
@@ -625,13 +625,13 @@
     <span class="nd">@tf_method</span><span class="p">()</span>
     <span class="nd">@overrides</span>
 <div class="viewcode-block" id="Multiplicative.K"><a class="viewcode-back" href="../../../public_api.html#gptf.core.kernels.Multiplicative.K">[docs]</a>    <span class="k">def</span> <span class="nf">K</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">X2</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="n">vals</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">pack</span><span class="p">([</span><span class="n">k</span><span class="o">.</span><span class="n">K</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">X2</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">])</span>
+        <span class="n">vals</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">k</span><span class="o">.</span><span class="n">K</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">X2</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_prod</span><span class="p">(</span><span class="n">vals</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span></div>
 
     <span class="nd">@tf_method</span><span class="p">()</span>
     <span class="nd">@overrides</span>
 <div class="viewcode-block" id="Multiplicative.Kdiag"><a class="viewcode-back" href="../../../public_api.html#gptf.core.kernels.Multiplicative.Kdiag">[docs]</a>    <span class="k">def</span> <span class="nf">Kdiag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
-        <span class="n">vals</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">pack</span><span class="p">([</span><span class="n">k</span><span class="o">.</span><span class="n">Kdiag</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">operands</span><span class="p">])</span>
+        <span class="n">vals</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">k</span><span class="o">.</span><span class="n">Kdiag</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">operands</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_prod</span><span class="p">(</span><span class="n">vals</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">__imul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
@@ -739,8 +739,6 @@
 <ul>
   <li><a href="../../../index.html">Documentation overview</a><ul>
   <li><a href="../../index.html">Module code</a><ul>
-  <li><a href="../core.html">gptf.core</a><ul>
-  </ul></li>
   </ul></li>
   </ul></li>
 </ul>

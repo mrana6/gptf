@@ -312,7 +312,7 @@
 
         <span class="n">variables</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">free_state</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">p</span><span class="o">.</span><span class="n">fixed</span><span class="p">]</span>
         <span class="n">variables</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span>
-        <span class="n">free_state</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="p">[</span><span class="n">tf</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">])</span>
+        <span class="n">free_state</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">tf</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
 
         <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_session</span><span class="p">()</span> <span class="k">as</span> <span class="n">sess</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
@@ -514,13 +514,13 @@
 <span class="sd">            ...             (self, test_points, num_latent, full_cov=False):</span>
 <span class="sd">            ...         n = tf.shape(test_points)[0]</span>
 <span class="sd">            ...         mu = tf.zeros([n, 1], self.dtype)</span>
-<span class="sd">            ...         mu = tf.tile(mu, tf.pack([1, num_latent]))</span>
+<span class="sd">            ...         mu = tf.tile(mu, tf.stack([1, num_latent]))</span>
 <span class="sd">            ...         if full_cov:</span>
 <span class="sd">            ...             var = tf.expand_dims(tfhacks.eye(n, self.dtype), 2)</span>
-<span class="sd">            ...             var = tf.tile(var, tf.pack([1, 1, num_latent]))</span>
+<span class="sd">            ...             var = tf.tile(var, tf.stack([1, 1, num_latent]))</span>
 <span class="sd">            ...         else:</span>
 <span class="sd">            ...             var = tf.ones([n, 1], self.dtype)</span>
-<span class="sd">            ...             var = tf.tile(var, tf.pack([1, num_latent]))</span>
+<span class="sd">            ...             var = tf.tile(var, tf.stack([1, num_latent]))</span>
 <span class="sd">            ...         return mu, var</span>
 <span class="sd">            ...     @tf_method()</span>
 <span class="sd">            ...     @overrides</span>
@@ -557,7 +557,7 @@
         <span class="n">L</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">cholesky</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span> <span class="o">+</span> <span class="n">jitter</span><span class="p">)</span>
         <span class="n">V_shape</span> <span class="o">=</span> <span class="p">[</span><span class="n">tf</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">L</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="n">tf</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">L</span><span class="p">)[</span><span class="mi">1</span><span class="p">],</span> <span class="n">num_samples</span><span class="p">]</span>
         <span class="n">V</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">random_normal</span><span class="p">(</span><span class="n">V_shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">L</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
-        <span class="n">samples</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">mu</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">tf</span><span class="o">.</span><span class="n">batch_matmul</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
+        <span class="n">samples</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">mu</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">tf</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span></div>
         
     <span class="nd">@autoflow</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;infer&#39;</span><span class="p">,</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;infer&#39;</span><span class="p">)),</span> 
@@ -653,13 +653,13 @@
 <span class="sd">            ...         n = tf.shape(test_points)[0]</span>
 <span class="sd">            ...         num_latent = tf.shape(Y)[1]</span>
 <span class="sd">            ...         mu = tf.zeros([n, 1], self.dtype)</span>
-<span class="sd">            ...         mu = tf.tile(mu, tf.pack([1, num_latent]))</span>
+<span class="sd">            ...         mu = tf.tile(mu, tf.stack([1, num_latent]))</span>
 <span class="sd">            ...         if full_cov:</span>
 <span class="sd">            ...             var = tf.expand_dims(tfhacks.eye(n, self.dtype), 2)</span>
-<span class="sd">            ...             var = tf.tile(var, tf.pack([1, 1, num_latent]))</span>
+<span class="sd">            ...             var = tf.tile(var, tf.stack([1, 1, num_latent]))</span>
 <span class="sd">            ...         else:</span>
 <span class="sd">            ...             var = tf.ones([n, 1], self.dtype)</span>
-<span class="sd">            ...             var = tf.tile(var, tf.pack([1, num_latent]))</span>
+<span class="sd">            ...             var = tf.tile(var, tf.stack([1, num_latent]))</span>
 <span class="sd">            ...         return mu, var</span>
 <span class="sd">            &gt;&gt;&gt; m = Example(tf.float64)</span>
 <span class="sd">            &gt;&gt;&gt; X = np.array([[.5]])</span>
@@ -692,14 +692,14 @@
         <span class="n">L</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">cholesky</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span> <span class="o">+</span> <span class="n">jitter</span><span class="p">)</span>
         <span class="n">V_shape</span> <span class="o">=</span> <span class="p">[</span><span class="n">tf</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">L</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="n">tf</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">L</span><span class="p">)[</span><span class="mi">1</span><span class="p">],</span> <span class="n">num_samples</span><span class="p">]</span>
         <span class="n">V</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">random_normal</span><span class="p">(</span><span class="n">V_shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">L</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
-        <span class="n">samples</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">mu</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">tf</span><span class="o">.</span><span class="n">batch_matmul</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
+        <span class="n">samples</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">mu</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">tf</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span></div>
         <span class="c1">#samples = []</span>
         <span class="c1">#for i in range(self.num_latent_functions):</span>
         <span class="c1">#    L = tf.cholesky(var[:, :, i] + jitter)</span>
         <span class="c1">#    V = tf.random_normal([tf.shape(L)[0], num_samples], dtype=L.dtype)</span>
         <span class="c1">#    samples.append(mu[:, i:i + 1] + tf.matmul(L, V))  # broadcast</span>
-        <span class="c1">#return tf.transpose(tf.pack(samples))</span>
+        <span class="c1">#return tf.transpose(tf.stack(samples))</span>
 
 <div class="viewcode-block" id="GPModel.predict_y"><a class="viewcode-back" href="../../../public_api.html#gptf.core.models.GPModel.predict_y">[docs]</a>    <span class="k">def</span> <span class="nf">predict_y</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_points</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Computes the mean and variance of held-out data.&quot;&quot;&quot;</span>
@@ -719,8 +719,6 @@
 <ul>
   <li><a href="../../../index.html">Documentation overview</a><ul>
   <li><a href="../../index.html">Module code</a><ul>
-  <li><a href="../core.html">gptf.core</a><ul>
-  </ul></li>
   </ul></li>
   </ul></li>
 </ul>

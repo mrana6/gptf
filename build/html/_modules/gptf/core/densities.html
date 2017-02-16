@@ -73,7 +73,7 @@
 
 
 <div class="viewcode-block" id="bernoulli"><a class="viewcode-back" href="../../../public_api.html#gptf.core.densities.bernoulli">[docs]</a><span class="k">def</span> <span class="nf">bernoulli</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">equal</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">p</span><span class="p">,</span> <span class="mi">1</span><span class="o">-</span><span class="n">p</span><span class="p">))</span></div>
+    <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">equal</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">p</span><span class="p">,</span> <span class="mi">1</span><span class="o">-</span><span class="n">p</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="poisson"><a class="viewcode-back" href="../../../public_api.html#gptf.core.densities.poisson">[docs]</a><span class="k">def</span> <span class="nf">poisson</span><span class="p">(</span><span class="n">lamb</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
@@ -140,8 +140,6 @@
 <ul>
   <li><a href="../../../index.html">Documentation overview</a><ul>
   <li><a href="../../index.html">Module code</a><ul>
-  <li><a href="../core.html">gptf.core</a><ul>
-  </ul></li>
   </ul></li>
   </ul></li>
 </ul>
