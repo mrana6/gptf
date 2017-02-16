@@ -37,4 +37,4 @@ script:
   - coverage run --source=gptf setup.py nosetests --verbosity=5
   
 after_success:
-coveralls  
+  coveralls  
