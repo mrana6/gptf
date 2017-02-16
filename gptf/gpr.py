@@ -60,17 +60,6 @@ class GPR(GPModel, ParamAttributes):
         success: True
               x: array([...,...,...]) 
 	
-	We check whether the values have changed after optimisation
-	>>> gp.kernel.variance.value != 5.
-	True
-	
-	>>> gp.kernel.lengthscales.value != 5.
-	True
-	
-	>>> gp.likelihood.variance.value != 5.
-	True
-
-
     """
     def __init__(self, kernel, meanfunction=meanfunctions.Zero(),
                  noise_variance=1.):
