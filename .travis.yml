@@ -28,7 +28,7 @@ install:
   - conda create -q -n test-environment python=3.5 numpy scipy future nomkl nose 
   - conda install libgcc
   - source activate test-environment
-  - pip install tensorflow
+  - pip install tensorflow-0.12.0-cp35-cp35m-manylinux1_x86_64.whl 
   - pip install .
   #https://storage.googleapis.com/tensorflow/linux/cpu/tensorflow-0.10.0-cp35-cp35m-linux_x86_64.whl
   - pip install coveralls
