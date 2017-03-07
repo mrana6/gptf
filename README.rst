@@ -43,6 +43,6 @@ Running tests
 
   git clone https://github.com/ICL-SML/gptf
   cd gptf
-  pip install nose
+  pip install . nose
   nosetests
 
