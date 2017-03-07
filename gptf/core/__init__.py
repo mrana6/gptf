@@ -6,7 +6,7 @@ def construct_apply_defaults():
                 self.arguments[param.name] = param.default
     BoundArguments.apply_defaults = apply_defaults
 try:
-    from inspect import signature, BoundArguments
+    from inspect import signature, Parameter, BoundArguments
     assert hasattr(BoundArguments, 'apply_defaults')
 except ImportError:
     # at time of writing, funcsigs does not implement apply_defaults
